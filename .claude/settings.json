@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "status=$(git -C /home/user/Bingo-Night status --short 2>/dev/null); if [ -n \"$status\" ]; then jq -n --arg s \"$status\" '{\"systemMessage\": (\"Unstaged changes in Bingo-Night — remember to commit!\\n\" + $s)}'; fi",
+            "statusMessage": "Checking git status..."
+          }
+        ]
+      }
+    ]
+  }
+}
