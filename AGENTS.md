@@ -4,25 +4,25 @@ These rules apply to any automation or agent working in this repo.
 
 ## Current Project State
 
-- Current cycle: `v0.1.0-dev1` — **Initial system shipped.** TV caller display, mobile controller, printable card generator all live. Flask + SocketIO backend with real-time WebSocket sync.
+- Current cycle: `v0.1.0-dev2` — **Player app shipped.** Family members can join on their phone/tablet, get a card, have numbers auto-marked, and claim BINGO. Server auto-verifies wins against all 12 lines. Host controller shows live player roster and winner banner. TV display shows winner overlay.
 - Public/stable baseline: none yet (pre-release).
+- `dev2` shipped: `bingo/session.py` PlayerRegistry (join, rejoin, disconnect, claim, reset_cards, thread-safe). `/play` route + `play.html`/`play.css`/`play.js` player app (loading→join→card screens, localStorage rejoin, auto-mark with pop animation, BINGO claim button, toast feedback, winner overlay). Controller: player roster (live pills with connected/claimed state), winner banner with dismiss. Display: winner overlay (auto-dismisses 15s). `app.py`: `join`, `rejoin`, `disconnect`, `claim_bingo` SocketIO events; `game_won` flag prevents duplicate broadcasts; reset pushes new cards to all players.
 - `dev1` shipped: Initial project scaffold. Flask + Flask-SocketIO backend. `/display` full-screen TV caller (75-ball board, colour-coded columns, live current-ball highlight). `/` mobile controller (Call Next, Undo, New Game with confirmation, progress bar, per-column called list). `/cards` printable card generator (configurable count 1–30, 5×5 FREE-centre cards, 2-per-page print layout, colour-coded BINGO headers). `bingo/game.py` game state (draw without replacement, undo, reset). `bingo/card_generator.py` standard B-I-N-G-O column ranges.
 - Issue tracker: use GitHub issues on `stu-the-ironman/bingo-night`.
 - Primary planning source is `TODO.md`; shipped scope is tracked in `DONE.md`; release-facing history is `docs/CHANGELOG.md`.
 
 ## Immediate Handoff Priorities
 
-### Phase 2 — Player App (HIGH)
-
-Allow family members to play on a phone/tablet without printing a card.
+### Phase 2 — Player App (SHIPPED dev2)
 
 | Task | File(s) | Status |
 |------|---------|--------|
-| `/play` route — join-game page (enter name, get assigned a card) | `app.py`, `templates/play.html` | Planned |
-| WebSocket auto-mark — called numbers highlight on player's card | `static/js/play.js`, `app.py` | Planned |
-| BINGO claim button — sends claim event; host sees alert on controller | `static/js/play.js`, `static/js/controller.js` | Planned |
-| Session persistence — rejoin on page reload without losing card | `app.py` (server-side session map) | Planned |
-| Player list on controller — show connected players, mark who claimed | `templates/controller.html`, `static/js/controller.js` | Planned |
+| `/play` route — join-game page (enter name, get assigned a card) | `app.py`, `templates/play.html` | **SHIPPED** |
+| WebSocket auto-mark — called numbers highlight on player's card | `static/js/play.js`, `app.py` | **SHIPPED** |
+| BINGO claim button — server auto-verifies all 12 lines | `static/js/play.js`, `bingo/session.py` | **SHIPPED** |
+| Session persistence — localStorage UUID → server rejoin | `app.py`, `bingo/session.py` | **SHIPPED** |
+| Player list on controller — live roster with claimed state | `templates/controller.html`, `static/js/controller.js` | **SHIPPED** |
+| Winner banner on controller + overlay on display | `controller.html`, `display.html`, `display.js` | **SHIPPED** |
 
 ### Phase 3 — Polish (MEDIUM)
 

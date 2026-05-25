@@ -11,13 +11,14 @@
 - [x] WebSocket real-time sync between controller and display
 - [x] `AGENTS.md`, `TODO.md`, `DONE.md`, `docs/CHANGELOG.md`, `docs/ROADMAP.md`, `docs/roadmap.html`
 
-## dev2 — Player App (Phase 2)
+## dev2 — Player App (DONE)
 
-- [ ] `/play` route — join-game page (enter name, receive a card)
-- [ ] WebSocket auto-mark — incoming `state` event highlights matched numbers on player card
-- [ ] BINGO claim button — emits `claim_bingo` event; controller receives `bingo_claimed` with player name
-- [ ] Server-side session map — socket ID → player name + card; survive page reload via cookie
-- [ ] Player list on controller — live roster of connected players, highlight who claimed
+- [x] `/play` route — join-game page (enter name, receive a card)
+- [x] WebSocket auto-mark — incoming `state` event highlights matched numbers on player card
+- [x] BINGO claim button — server auto-verifies all 12 lines; toast feedback to player
+- [x] Session persistence — localStorage UUID → server rejoin on page reload
+- [x] Player list on controller — live roster with connected/claimed state
+- [x] Winner banner on controller; winner overlay on TV display (auto-dismisses 15s)
 
 ## dev3 — Polish (Phase 3)
 

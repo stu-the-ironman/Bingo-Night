@@ -54,6 +54,18 @@
 
   </div>
 
+  <!-- Winner overlay for TV -->
+  <div id="winner-overlay" style="
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,.82);
+    flex-direction:column; align-items:center; justify-content:center; gap:2vh;
+    z-index:50; cursor:pointer;
+  " onclick="this.style.display='none'">
+    <div style="font-size:clamp(3rem,10vw,8rem)">🎉</div>
+    <div style="font-size:clamp(2rem,7vw,6rem);font-weight:900;color:#f9ca24;letter-spacing:.1em">BINGO!</div>
+    <div id="winner-display-name" style="font-size:clamp(1.2rem,4vw,3rem);color:#fff"></div>
+    <div style="font-size:clamp(.7rem,1.5vw,1.1rem);color:#888;margin-top:1vh">Tap anywhere to dismiss</div>
+  </div>
+
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
   <script src="/static/js/display.js"></script>
 </body>

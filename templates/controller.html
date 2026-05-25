@@ -28,7 +28,9 @@
       <div id="progress-bar" class="progress-bar" style="width:0%"></div>
     </div>
     <div class="progress-label">
-      <span id="called-count">0</span> called &nbsp;·&nbsp; <span id="remaining-count">75</span> remaining
+      <span id="called-count">0</span> called &nbsp;·&nbsp;
+      <span id="remaining-count">75</span> remaining &nbsp;·&nbsp;
+      <span id="player-count">0</span> players
     </div>
 
     <!-- Controls -->
@@ -36,6 +38,14 @@
       <button id="btn-call" class="btn btn-call">Call Next</button>
       <button id="btn-undo" class="btn btn-undo" disabled>Undo</button>
       <button id="btn-reset" class="btn btn-reset">New Game</button>
+    </section>
+
+    <!-- Players roster -->
+    <section class="players-section">
+      <h2>Players <span id="player-badge" class="player-badge">0</span></h2>
+      <div id="player-list" class="player-list">
+        <div class="no-players">No players yet — share <strong>/play</strong></div>
+      </div>
     </section>
 
     <!-- Called list -->
@@ -75,10 +85,16 @@
   <!-- Reset confirmation modal -->
   <div id="reset-modal" class="modal hidden">
     <div class="modal-box">
-      <p>Start a new game? All called numbers will be cleared.</p>
+      <p>Start a new game? All called numbers will be cleared and players will get new cards.</p>
       <button id="confirm-reset" class="btn btn-call">Yes, New Game</button>
       <button id="cancel-reset" class="btn btn-undo">Cancel</button>
     </div>
+  </div>
+
+  <!-- BINGO winner banner -->
+  <div id="winner-banner" class="winner-banner hidden">
+    <div class="winner-banner-text">🎉 <span id="winner-banner-name"></span> has BINGO!</div>
+    <button class="winner-banner-dismiss" id="btn-dismiss-winner">Dismiss</button>
   </div>
 
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>

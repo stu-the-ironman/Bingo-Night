@@ -316,7 +316,7 @@
 <header class="site-header">
   <div>
     <h1>Bingo Night</h1>
-    <p class="subtitle">v0.1.0-dev1 &mdash; 2026-05-25 &mdash; Initial system shipped</p>
+    <p class="subtitle">v0.1.0-dev2 &mdash; 2026-05-25 &mdash; Player app shipped</p>
   </div>
   <div class="header-actions">
     <button class="hdr-btn" onclick="openChangelog()">Changelog</button>
@@ -376,6 +376,29 @@
 // ── Data ────────────────────────────────────────────────────────────────────
 
 const changelogData = [
+  {
+    version: 'v0.1.0-dev2',
+    date: '2026-05-25',
+    sections: [
+      {
+        title: 'Added',
+        items: [
+          'bingo/session.py — PlayerRegistry: thread-safe join, rejoin, disconnect, claim, reset_cards',
+          'verify_win: checks all 12 lines (5 rows, 5 cols, 2 diagonals); FREE centre counts for all lines',
+          '/play route — player app with loading → join → card three-screen flow',
+          'Player join/rejoin via localStorage UUID; page reload restores card',
+          'Numbers auto-mark on card with pop animation as host calls them',
+          'BINGO claim button — server verifies, returns result; toast feedback (confirmed / not yet)',
+          'Winning line highlighted in gold on valid claim',
+          'Winner overlay on player page; winner overlay on TV display (auto-dismisses 15 s)',
+          'Controller: live player roster (name pills, connected/claimed state)',
+          'Controller: BINGO winner banner slides in on valid claim; dismissed by host or on New Game',
+          'New Game now pushes fresh cards to all connected players automatically',
+          'game_won flag prevents duplicate bingo_winner broadcasts per game',
+        ],
+      },
+    ],
+  },
   {
     version: 'v0.1.0-dev1',
     date: '2026-05-25',
@@ -441,6 +464,43 @@ const checklistData = [
       { id: 'cl-ws-connect', label: 'Second browser tab receives current state on connect' },
       { id: 'cl-ws-sync', label: 'Display and controller stay in sync across calls' },
       { id: 'cl-ws-reset', label: 'Reset propagates to all open tabs' },
+    ],
+  },
+  {
+    group: 'Player App — Join',
+    items: [
+      { id: 'cl-play-loading', label: 'Loading spinner shown while checking rejoin' },
+      { id: 'cl-play-join-form', label: 'Join form shown when no stored player ID' },
+      { id: 'cl-play-join-btn', label: 'Join button disabled until name entered' },
+      { id: 'cl-play-card-shown', label: 'Card appears after joining' },
+      { id: 'cl-play-rejoin', label: 'Reload page → card restored without re-entering name' },
+      { id: 'cl-play-rejoin-fail', label: 'Stale/invalid stored ID → falls back to join form' },
+    ],
+  },
+  {
+    group: 'Player App — Card & Claiming',
+    items: [
+      { id: 'cl-play-automark', label: 'Called numbers auto-mark on player card in real time' },
+      { id: 'cl-play-pop', label: 'Newly marked cells animate with a pop' },
+      { id: 'cl-play-free', label: 'FREE centre always marked gold' },
+      { id: 'cl-play-miniball', label: 'Mini ball shows current call in header' },
+      { id: 'cl-play-claim-valid', label: 'Valid BINGO: toast confirmed + line outlined in gold' },
+      { id: 'cl-play-claim-invalid', label: 'Invalid BINGO: toast "Not quite" shown' },
+      { id: 'cl-play-winner-overlay', label: 'Winner overlay appears on all player screens' },
+      { id: 'cl-play-winner-dismiss', label: 'Winner overlay dismisses on tap or after 15 s' },
+    ],
+  },
+  {
+    group: 'Controller — Players & Winner',
+    items: [
+      { id: 'cl-ctrl-roster', label: 'Player roster shows connected players as pills' },
+      { id: 'cl-ctrl-roster-count', label: 'Player count shown in progress label and badge' },
+      { id: 'cl-ctrl-roster-claimed', label: 'Claimed players show gold border and 🎉' },
+      { id: 'cl-ctrl-roster-disconnected', label: 'Disconnected players shown dimmed' },
+      { id: 'cl-ctrl-winner-banner', label: 'Winner banner slides in on valid claim' },
+      { id: 'cl-ctrl-winner-dismiss', label: 'Dismiss button hides banner' },
+      { id: 'cl-ctrl-newgame-cards', label: 'New Game pushes fresh cards to all players' },
+      { id: 'cl-ctrl-newgame-banner', label: 'Winner banner cleared on New Game' },
     ],
   },
 ];
@@ -518,43 +578,43 @@ const roadmap = [
       {
         id: 'player-join',
         title: 'Join Game Page',
-        desc: 'Players visit /play on their phone, enter their name, and are assigned a card. Card is stored server-side and sent to the client.',
-        status: 'planned',
+        desc: 'Players visit /play on their phone, enter their name, and are assigned a card. Three-screen flow: loading (rejoin check) → join form → card. Card stored server-side in PlayerRegistry.',
+        status: 'shipped',
         cycle: 'dev2',
-        files: ['app.py', 'templates/play.html', 'static/css/play.css'],
+        files: ['app.py', 'templates/play.html', 'static/css/play.css', 'bingo/session.py'],
       },
       {
         id: 'player-automark',
         title: 'Auto-Mark on Call',
-        desc: 'When the host calls a number, all connected player cards that contain it auto-mark the cell in real time via WebSocket push.',
-        status: 'planned',
+        desc: 'When the host calls a number, all connected player cards that contain it auto-mark the cell in real time via WebSocket push. New marks animate with a pop.',
+        status: 'shipped',
         cycle: 'dev2',
         files: ['static/js/play.js', 'app.py'],
         deps: ['player-join'],
       },
       {
         id: 'player-claim',
-        title: 'BINGO Claim Button',
-        desc: 'Player taps BINGO; server emits bingo_claimed event; controller receives an alert showing the player name. Host confirms or dismisses.',
-        status: 'planned',
+        title: 'BINGO Claim + Server Verify',
+        desc: 'Player taps BINGO; server checks all 12 lines against current called set. Valid claim broadcasts bingo_winner to all; invalid returns a toast to the claimant only. Winning line highlighted in gold.',
+        status: 'shipped',
         cycle: 'dev2',
-        files: ['static/js/play.js', 'static/js/controller.js', 'app.py'],
+        files: ['static/js/play.js', 'static/js/controller.js', 'app.py', 'bingo/session.py'],
         deps: ['player-join'],
       },
       {
         id: 'player-session',
         title: 'Session Persistence',
-        desc: 'Socket ID → player name + card stored server-side. Browser cookie allows a player to rejoin after a page reload without losing their card.',
-        status: 'planned',
+        desc: 'PlayerRegistry stores UUID → {name, card, socket_id}. localStorage UUID allows rejoin after page reload without re-entering name or losing card.',
+        status: 'shipped',
         cycle: 'dev2',
-        files: ['app.py'],
+        files: ['app.py', 'bingo/session.py'],
         deps: ['player-join'],
       },
       {
         id: 'player-roster',
         title: 'Player Roster on Controller',
-        desc: 'Controller shows a live list of connected players. Highlights who has claimed BINGO. Allows host to kick a stale session.',
-        status: 'planned',
+        desc: 'Controller shows live roster of connected players as pills. Dimmed when disconnected, gold border when claimed. Count shown in progress label and badge.',
+        status: 'shipped',
         cycle: 'dev2',
         files: ['templates/controller.html', 'static/js/controller.js'],
         deps: ['player-join', 'player-claim'],

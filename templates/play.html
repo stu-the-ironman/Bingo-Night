@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Bingo Night — Play</title>
+  <link rel="stylesheet" href="/static/css/play.css">
+</head>
+<body>
+
+  <!-- Loading -->
+  <div id="screen-loading" class="screen active">
+    <div class="spinner"></div>
+    <div class="loading-text">Connecting…</div>
+  </div>
+
+  <!-- Join -->
+  <div id="screen-join" class="screen">
+    <div class="join-logo">BINGO NIGHT</div>
+    <div class="join-sub">Enter your name to get your card</div>
+    <div class="join-form">
+      <input id="name-input" class="join-input" type="text"
+             placeholder="Your name" maxlength="30" autocomplete="off">
+      <button id="btn-join" class="btn-join" disabled>Join Game</button>
+    </div>
+  </div>
+
+  <!-- Card -->
+  <div id="screen-card" class="screen">
+    <div class="card-header-row">
+      <div id="player-tag" class="player-name-tag"></div>
+      <div id="mini-ball" class="mini-ball">Waiting…</div>
+    </div>
+
+    <div class="bingo-card-wrap">
+      <div class="card-letter-row" id="card-letters"></div>
+      <div class="card-grid" id="card-grid"></div>
+    </div>
+
+    <button id="btn-bingo" class="btn-bingo" disabled>BINGO!</button>
+  </div>
+
+  <!-- Claim feedback toast -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Winner overlay (shown to everyone when someone wins) -->
+  <div id="winner-overlay" class="winner-overlay">
+    <div class="winner-emoji">🎉</div>
+    <div class="winner-title">BINGO!</div>
+    <div class="winner-name" id="winner-name-text"></div>
+    <button class="btn-dismiss" onclick="dismissWinner()">Continue</button>
+  </div>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="/static/js/play.js"></script>
+</body>
+</html>

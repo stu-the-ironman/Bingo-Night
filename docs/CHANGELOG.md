@@ -1,5 +1,22 @@
 # Changelog
 
+## v0.1.0-dev2 — 2026-05-25
+
+### Added
+
+- `bingo/session.py` — `PlayerRegistry`: thread-safe player state management (join, rejoin, disconnect, claim, reset_cards, player_list). `verify_win` checks all 12 BINGO lines (5 rows, 5 cols, 2 diagonals); FREE centre counts for all lines it participates in.
+- `/play` route — player join + card page. Three-screen flow: loading → join → card.
+- Player join/rejoin via localStorage UUID; page reload restores card without re-entering name.
+- Numbers auto-mark on card with pop animation as host calls them.
+- BINGO claim button — server verifies win, returns result to player; toast feedback (confirmed / not yet).
+- Winning line highlighted in gold outline on valid claim.
+- Winner overlay on player page; winner overlay on TV display (auto-dismisses 15 s, tap to dismiss).
+- Controller: live player roster (name pills, connected/disconnected state, claimed indicator).
+- Controller: BINGO winner banner slides in at top on valid claim; dismissed by host or on New Game.
+- `app.py`: `game_won` flag prevents duplicate `bingo_winner` broadcasts per game.
+- `app.py` `reset`: pushes `new_card` event to all connected players before broadcasting new game state; clears `game_won`.
+- `APP_VERSION = 'v0.1.0-dev2'` constant in `app.py`.
+
 ## v0.1.0-dev1 — 2026-05-25
 
 ### Added

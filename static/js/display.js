@@ -74,3 +74,10 @@ socket.on('all_called', () => {
   document.getElementById('waiting-msg').textContent = 'All 75 balls called!';
   document.getElementById('waiting-msg').style.opacity = '1';
 });
+socket.on('bingo_winner', data => {
+  const overlay = document.getElementById('winner-overlay');
+  document.getElementById('winner-display-name').textContent = `${data.name} wins!`;
+  overlay.style.display = 'flex';
+  // Auto-dismiss after 15 seconds
+  setTimeout(() => { overlay.style.display = 'none'; }, 15000);
+});
