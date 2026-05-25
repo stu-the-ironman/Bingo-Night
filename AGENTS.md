@@ -1,0 +1,132 @@
+# Bingo Night Agent Workflow Rules
+
+These rules apply to any automation or agent working in this repo.
+
+## Current Project State
+
+- Current cycle: `v0.1.0-dev1` — **Initial system shipped.** TV caller display, mobile controller, printable card generator all live. Flask + SocketIO backend with real-time WebSocket sync.
+- Public/stable baseline: none yet (pre-release).
+- `dev1` shipped: Initial project scaffold. Flask + Flask-SocketIO backend. `/display` full-screen TV caller (75-ball board, colour-coded columns, live current-ball highlight). `/` mobile controller (Call Next, Undo, New Game with confirmation, progress bar, per-column called list). `/cards` printable card generator (configurable count 1–30, 5×5 FREE-centre cards, 2-per-page print layout, colour-coded BINGO headers). `bingo/game.py` game state (draw without replacement, undo, reset). `bingo/card_generator.py` standard B-I-N-G-O column ranges.
+- Issue tracker: use GitHub issues on `stu-the-ironman/bingo-night`.
+- Primary planning source is `TODO.md`; shipped scope is tracked in `DONE.md`; release-facing history is `docs/CHANGELOG.md`.
+
+## Immediate Handoff Priorities
+
+### Phase 2 — Player App (HIGH)
+
+Allow family members to play on a phone/tablet without printing a card.
+
+| Task | File(s) | Status |
+|------|---------|--------|
+| `/play` route — join-game page (enter name, get assigned a card) | `app.py`, `templates/play.html` | Planned |
+| WebSocket auto-mark — called numbers highlight on player's card | `static/js/play.js`, `app.py` | Planned |
+| BINGO claim button — sends claim event; host sees alert on controller | `static/js/play.js`, `static/js/controller.js` | Planned |
+| Session persistence — rejoin on page reload without losing card | `app.py` (server-side session map) | Planned |
+| Player list on controller — show connected players, mark who claimed | `templates/controller.html`, `static/js/controller.js` | Planned |
+
+### Phase 3 — Polish (MEDIUM)
+
+| Task | File(s) | Status |
+|------|---------|--------|
+| Sound effects — ball call audio cue | `static/js/controller.js`, `static/sounds/` | Planned |
+| Themed ball sets — custom label overlays (e.g. holiday themes) | `bingo/game.py`, `app.py` | Planned |
+| QR code on display — scan to join as a player | `templates/display.html` | Planned |
+| Dark/light print option for cards | `static/css/cards.css` | Planned |
+
+## Commit Discipline
+
+- **ALWAYS stage and commit after every change. Do not wait for permission.**
+- `git add` relevant files then `git commit -m "..."`.
+- Do not leave unstaged changes in the worktree.
+- Commit only files related to the current task.
+
+## Documentation Discipline
+
+Every time work lands, **all six documents must be updated in the same commit**:
+
+| Document | What to update |
+|---|---|
+| `docs/roadmap.html` | Card status, cycle, desc; add new cards; update changelog/checklist data |
+| `docs/ROADMAP.md` | Mermaid timeline entry; Current State prose; Now/Next sections |
+| `docs/CHANGELOG.md` | New bullet under current dev cycle heading |
+| `AGENTS.md` | Settled decisions, handoff priorities, current cycle state |
+| `DONE.md` | New section entry for the completed feature |
+| `TODO.md` | Check off completed items; add newly scoped items |
+
+## Interactive Roadmap Maintenance (`docs/roadmap.html`)
+
+The interactive roadmap is the **primary visual tracker** for the project.
+
+### Card Status Values
+
+| Value | Meaning |
+|---|---|
+| `shipped` | Merged, tested, confirmed working by a real user or tester |
+| `done` | Code committed and CI green, but not yet tester-verified |
+| `active` | Currently being worked on this cycle |
+| `planned` | Scoped for an upcoming cycle — implementation not started |
+| `future` | Deferred; no cycle assigned yet |
+
+### What to Update When a Feature Lands
+
+1. **Find the card** — search the `roadmap` JS object by `id` or `title`.
+2. **Update `status`** — set to `done` when committed, `shipped` once tester confirms.
+3. **Update `cycle`** — set to the current dev cycle (e.g. `'dev2'`).
+4. **Update `desc`** — if the implementation detail differs from what was planned, rewrite it to match reality.
+5. **Update `files`** — add or correct the key file paths.
+
+### What to Update When New Work Is Scoped
+
+Add a new card object to the correct module's `items` array:
+
+```javascript
+{ id: 'unique-kebab-id', title: 'Feature Name',
+  desc: 'What it does and why it matters — one or two sentences.',
+  status: 'planned', cycle: 'dev2',
+  files: ['app.py', 'templates/play.html'],
+  deps: ['id-of-dependency-card'] },
+```
+
+### What NOT to Do
+
+- Do not leave a card at `status: 'planned'` after the code is committed.
+- Do not leave a card at `status: 'done'` indefinitely — chase the tester sign-off.
+- Do not edit `roadmap.html` in isolation — always sync `ROADMAP.md`, `CHANGELOG.md`, `DONE.md`, `TODO.md` in the same commit.
+
+## Version Bumping
+
+- After every major feature/change: bump the version in `app.py` (`APP_VERSION`) and `docs/CHANGELOG.md`.
+- Versioning model:
+  - `v0.1.0-devN` is the rolling dev/nightly line
+  - `v0.1.0` will be the first public stable release
+  - dev numbering is continuous
+
+## Settled Decisions
+
+### WebSocket Transport — Flask-SocketIO + threading
+
+**Flask-SocketIO with `async_mode='threading'` is the chosen transport.** Eventlet was evaluated and rejected due to deprecation warnings and maintenance status. The threading mode is sufficient for LAN game-night scale (< 20 concurrent players). Do not switch to eventlet or gevent without a concrete reason.
+
+### No External Database
+
+**Game state is held in memory in `BingoGame` singleton.** There is no database. This is intentional — the app runs for a single game session and resets cleanly. Persistence (e.g. SQLite for session rejoin) can be added in Phase 2 player app work, but the in-memory model must remain the primary path.
+
+### Standard BINGO Column Ranges
+
+**B: 1–15, I: 16–30, N: 31–45, G: 46–60, O: 61–75.** Do not change or make these configurable. Themed variants should use a separate ball-set abstraction layered on top, not modify the core ranges.
+
+### Column Colours
+
+**B: `#e74c3c`, I: `#e67e22`, N: `#27ae60`, G: `#2980b9`, O: `#8e44ad`.** These are defined in the JS client files and the CSS. Keep them consistent across all three pages.
+
+## Platform Scope
+
+- **LAN / local network web app.** Not designed for public internet deployment.
+- Python 3.11+, Flask 3.x, Flask-SocketIO 5.x.
+- Client targets: any modern browser. TV display tested on Chrome. Controller tested on mobile Chrome/Safari.
+
+## Coordination
+
+- Ask before changing the WebSocket event schema — controller and display must stay in sync.
+- The `state` event payload (`current`, `called`, `remaining`, `total`) is the canonical game state wire format. Do not rename fields without updating all JS consumers.
+- Keep `bingo/game.py` free of Flask imports — it is pure logic and must remain independently testable.

@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bingo Night — Roadmap</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f0f1a;
+      --surface: #1a1a2e;
+      --surface2: #16213e;
+      --accent: #f9ca24;
+      --text: #e8e8f0;
+      --muted: #888;
+      --border: #2a2a4a;
+
+      --shipped: #27ae60;
+      --done:    #2980b9;
+      --active:  #f39c12;
+      --planned: #8e44ad;
+      --future:  #555;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    .site-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 1.25rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: .75rem;
+    }
+
+    .site-header h1 {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--accent);
+      letter-spacing: .1em;
+    }
+
+    .subtitle {
+      font-size: .85rem;
+      color: var(--muted);
+      margin-top: .15rem;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+    }
+
+    .hdr-btn {
+      padding: .4rem .9rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: transparent;
+      color: var(--text);
+      font-size: .82rem;
+      cursor: pointer;
+      transition: border-color .15s, color .15s;
+    }
+
+    .hdr-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Legend ── */
+    .legend {
+      display: flex;
+      gap: 1rem;
+      padding: .75rem 2rem;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: .35rem;
+      font-size: .78rem;
+      color: var(--muted);
+    }
+
+    .dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ── Board layout ── */
+    .board {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      padding: 1.5rem 2rem 3rem;
+    }
+
+    /* ── Module column ── */
+    .module {
+      width: 300px;
+      flex-shrink: 0;
+    }
+
+    .module-title {
+      font-size: .7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--muted);
+      margin-bottom: .75rem;
+      padding-bottom: .4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .cards { display: flex; flex-direction: column; gap: .6rem; }
+
+    /* ── Card ── */
+    .card {
+      background: var(--surface);
+      border-radius: 8px;
+      padding: .85rem 1rem;
+      border-left: 3px solid transparent;
+      cursor: pointer;
+      transition: border-color .15s, transform .1s;
+      position: relative;
+    }
+
+    .card:hover { transform: translateX(3px); }
+
+    .card[data-status="shipped"] { border-color: var(--shipped); }
+    .card[data-status="done"]    { border-color: var(--done); }
+    .card[data-status="active"]  { border-color: var(--active); }
+    .card[data-status="planned"] { border-color: var(--planned); }
+    .card[data-status="future"]  { border-color: var(--future); }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: .5rem;
+      margin-bottom: .4rem;
+    }
+
+    .card-title {
+      font-size: .9rem;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .badge {
+      font-size: .65rem;
+      font-weight: 700;
+      padding: .15rem .45rem;
+      border-radius: 3px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .badge-shipped { background: var(--shipped); color: #fff; }
+    .badge-done    { background: var(--done);    color: #fff; }
+    .badge-active  { background: var(--active);  color: #111; }
+    .badge-planned { background: var(--planned); color: #fff; }
+    .badge-future  { background: var(--future);  color: #ccc; }
+
+    .card-cycle {
+      font-size: .7rem;
+      color: var(--muted);
+      margin-bottom: .4rem;
+    }
+
+    .card-desc {
+      font-size: .78rem;
+      color: #aaa;
+      line-height: 1.45;
+    }
+
+    /* ── Detail modal ── */
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 1rem;
+    }
+
+    .overlay.hidden { display: none; }
+
+    .modal {
+      background: var(--surface2);
+      border-radius: 10px;
+      padding: 1.5rem;
+      max-width: 520px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+    }
+
+    .modal-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: .4rem;
+    }
+
+    .modal-meta {
+      font-size: .78rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .modal-section { margin-bottom: 1rem; }
+
+    .modal-section h3 {
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--muted);
+      margin-bottom: .4rem;
+    }
+
+    .modal-section p, .modal-section li {
+      font-size: .85rem;
+      line-height: 1.5;
+      color: #ccc;
+    }
+
+    .modal-section ul { padding-left: 1.2rem; }
+
+    .file-pill {
+      display: inline-block;
+      background: #111;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: .15rem .5rem;
+      font-size: .72rem;
+      font-family: monospace;
+      color: var(--accent);
+      margin: .15rem .15rem 0 0;
+    }
+
+    .close-btn {
+      display: block;
+      margin-top: 1.25rem;
+      padding: .5rem;
+      width: 100%;
+      background: var(--border);
+      border: none;
+      border-radius: 6px;
+      color: var(--text);
+      font-size: .9rem;
+      cursor: pointer;
+    }
+
+    .close-btn:hover { background: #333; }
+
+    /* ── Changelog modal ── */
+    .changelog-entry { margin-bottom: 1.5rem; }
+
+    .changelog-entry h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: .5rem;
+    }
+
+    .changelog-entry ul {
+      padding-left: 1.2rem;
+    }
+
+    .changelog-entry li {
+      font-size: .82rem;
+      color: #ccc;
+      line-height: 1.5;
+      margin-bottom: .2rem;
+    }
+
+    /* ── Checklist modal ── */
+    .checklist-group { margin-bottom: 1.25rem; }
+
+    .checklist-group h3 {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--muted);
+      margin-bottom: .5rem;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      margin-bottom: .35rem;
+    }
+
+    .checklist-item label { font-size: .83rem; color: #ccc; cursor: pointer; }
+
+    .checklist-item input[type="checkbox"] { cursor: pointer; }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div>
+    <h1>Bingo Night</h1>
+    <p class="subtitle">v0.1.0-dev1 &mdash; 2026-05-25 &mdash; Initial system shipped</p>
+  </div>
+  <div class="header-actions">
+    <button class="hdr-btn" onclick="openChangelog()">Changelog</button>
+    <button class="hdr-btn" onclick="openChecklist()">Test Checklist</button>
+  </div>
+</header>
+
+<div class="legend">
+  <div class="legend-item"><div class="dot" style="background:var(--shipped)"></div> Shipped</div>
+  <div class="legend-item"><div class="dot" style="background:var(--done)"></div> Done</div>
+  <div class="legend-item"><div class="dot" style="background:var(--active)"></div> Active</div>
+  <div class="legend-item"><div class="dot" style="background:var(--planned)"></div> Planned</div>
+  <div class="legend-item"><div class="dot" style="background:var(--future)"></div> Future</div>
+</div>
+
+<div class="board" id="board"></div>
+
+<!-- Card detail modal -->
+<div class="overlay hidden" id="card-overlay" onclick="closeCard(event)">
+  <div class="modal" id="card-modal">
+    <div class="card-header">
+      <div class="modal-title" id="modal-title"></div>
+      <span class="badge" id="modal-badge"></span>
+    </div>
+    <div class="modal-meta" id="modal-meta"></div>
+    <div class="modal-section">
+      <h3>Description</h3>
+      <p id="modal-desc"></p>
+    </div>
+    <div class="modal-section" id="modal-files-section">
+      <h3>Key Files</h3>
+      <div id="modal-files"></div>
+    </div>
+    <button class="close-btn" onclick="closeOverlay('card-overlay')">Close</button>
+  </div>
+</div>
+
+<!-- Changelog modal -->
+<div class="overlay hidden" id="changelog-overlay" onclick="closeCard(event)">
+  <div class="modal" id="changelog-modal">
+    <div class="modal-title" style="margin-bottom:1rem">Changelog</div>
+    <div id="changelog-body"></div>
+    <button class="close-btn" onclick="closeOverlay('changelog-overlay')">Close</button>
+  </div>
+</div>
+
+<!-- Checklist modal -->
+<div class="overlay hidden" id="checklist-overlay" onclick="closeCard(event)">
+  <div class="modal" id="checklist-modal">
+    <div class="modal-title" style="margin-bottom:1rem">Test Checklist</div>
+    <div id="checklist-body"></div>
+    <button class="close-btn" onclick="closeOverlay('checklist-overlay')">Close</button>
+  </div>
+</div>
+
+<script>
+// ── Data ────────────────────────────────────────────────────────────────────
+
+const changelogData = [
+  {
+    version: 'v0.1.0-dev1',
+    date: '2026-05-25',
+    sections: [
+      {
+        title: 'Added',
+        items: [
+          'Flask + Flask-SocketIO backend with threading async mode',
+          'BingoGame: draw without replacement, undo, reset, state serialisation',
+          'Card generator: standard 5×5 BINGO cards with FREE centre, correct column ranges',
+          '/display — full-screen TV caller: large current-ball, 75-ball board, pulse animation',
+          '/ controller — mobile-friendly: Call Next, Undo, New Game with confirmation modal, progress bar',
+          '/cards — printable card generator: configurable 1–30 cards, 2-per-page print layout',
+          '/api/cards — JSON endpoint for card renderer',
+          'Real-time WebSocket state sync across all connected clients',
+          'Full project documentation scaffold (AGENTS.md, TODO.md, DONE.md, roadmap)',
+        ],
+      },
+    ],
+  },
+];
+
+const checklistData = [
+  {
+    group: 'Caller — TV Display',
+    items: [
+      { id: 'cl-display-idle', label: 'Display shows idle state before first call' },
+      { id: 'cl-display-call', label: 'Ball appears large with correct column colour on call' },
+      { id: 'cl-display-board', label: 'Called number highlights in board grid' },
+      { id: 'cl-display-latest', label: 'Latest number pulses; previous stays lit' },
+      { id: 'cl-display-count', label: 'Called count updates in header' },
+      { id: 'cl-display-all', label: 'All 75 called: board fully lit, count shows 75' },
+    ],
+  },
+  {
+    group: 'Caller — Controller',
+    items: [
+      { id: 'cl-ctrl-call', label: 'Call Next draws a ball and syncs to display' },
+      { id: 'cl-ctrl-undo', label: 'Undo reverts last call; display updates' },
+      { id: 'cl-ctrl-undo-disabled', label: 'Undo button disabled when no calls made' },
+      { id: 'cl-ctrl-reset', label: 'New Game shows confirmation modal' },
+      { id: 'cl-ctrl-reset-cancel', label: 'Cancel keeps game state intact' },
+      { id: 'cl-ctrl-reset-confirm', label: 'Confirm resets board and all clients' },
+      { id: 'cl-ctrl-progress', label: 'Progress bar advances correctly' },
+      { id: 'cl-ctrl-allcalled', label: 'Call Next disabled after all 75 called' },
+      { id: 'cl-ctrl-list', label: 'Called list shows numbers grouped by column' },
+    ],
+  },
+  {
+    group: 'Card Generator',
+    items: [
+      { id: 'cl-cards-gen', label: 'Cards auto-generated on page load' },
+      { id: 'cl-cards-regen', label: 'Generate button produces fresh unique cards' },
+      { id: 'cl-cards-free', label: 'FREE space at centre of every card' },
+      { id: 'cl-cards-ranges', label: 'B col 1–15, I 16–30, N 31–45, G 46–60, O 61–75' },
+      { id: 'cl-cards-print', label: 'Print: controls hidden, cards 2-per-row' },
+      { id: 'cl-cards-count', label: 'Count input 1–30 respected' },
+    ],
+  },
+  {
+    group: 'WebSocket Sync',
+    items: [
+      { id: 'cl-ws-connect', label: 'Second browser tab receives current state on connect' },
+      { id: 'cl-ws-sync', label: 'Display and controller stay in sync across calls' },
+      { id: 'cl-ws-reset', label: 'Reset propagates to all open tabs' },
+    ],
+  },
+];
+
+const roadmap = [
+  {
+    module: 'Caller',
+    items: [
+      {
+        id: 'caller-display',
+        title: 'TV Display',
+        desc: 'Full-screen dark-theme caller board for TV/projector. Large current-ball widget with column colour, 75-ball grid that lights up as numbers are called, pulse animation on latest call.',
+        status: 'shipped',
+        cycle: 'dev1',
+        files: ['templates/display.html', 'static/css/display.css', 'static/js/display.js'],
+      },
+      {
+        id: 'caller-controller',
+        title: 'Mobile Controller',
+        desc: 'Phone-friendly caller interface. Call Next, Undo (with disabled state), New Game with confirmation modal, progress bar, per-column called list.',
+        status: 'shipped',
+        cycle: 'dev1',
+        files: ['templates/controller.html', 'static/css/controller.css', 'static/js/controller.js'],
+      },
+      {
+        id: 'caller-backend',
+        title: 'Game Engine + WebSocket',
+        desc: 'Flask + Flask-SocketIO backend. BingoGame state machine (draw without replacement, undo, reset). State broadcast to all connected clients on every change.',
+        status: 'shipped',
+        cycle: 'dev1',
+        files: ['app.py', 'bingo/game.py'],
+      },
+      {
+        id: 'caller-history',
+        title: 'Caller History on Display',
+        desc: 'Show the last 5 called numbers below the current ball on the TV display, so players who missed a call can catch up.',
+        status: 'planned',
+        cycle: 'dev3',
+        files: ['templates/display.html', 'static/js/display.js'],
+      },
+      {
+        id: 'caller-sounds',
+        title: 'Sound Effects',
+        desc: 'Short audio cue played in the browser on each ball call. Uses the Web Audio API — no server-side dependencies.',
+        status: 'planned',
+        cycle: 'dev3',
+        files: ['static/js/controller.js'],
+      },
+    ],
+  },
+  {
+    module: 'Card Generator',
+    items: [
+      {
+        id: 'cards-generator',
+        title: 'Printable Card Generator',
+        desc: 'Configurable 1–30 cards per run. Standard 5×5 BINGO layout with correct column ranges, FREE centre space, colour-coded headers. 2-per-page print layout via CSS @media print.',
+        status: 'shipped',
+        cycle: 'dev1',
+        files: ['bingo/card_generator.py', 'templates/cards.html', 'static/css/cards.css', 'static/js/cards.js'],
+      },
+      {
+        id: 'cards-print-modes',
+        title: 'Dark / Light Print Modes',
+        desc: 'Toggle between a colour print mode (current) and a low-ink monochrome mode for households that want to save printer ink.',
+        status: 'planned',
+        cycle: 'dev3',
+        files: ['static/css/cards.css', 'templates/cards.html'],
+      },
+    ],
+  },
+  {
+    module: 'Player App',
+    items: [
+      {
+        id: 'player-join',
+        title: 'Join Game Page',
+        desc: 'Players visit /play on their phone, enter their name, and are assigned a card. Card is stored server-side and sent to the client.',
+        status: 'planned',
+        cycle: 'dev2',
+        files: ['app.py', 'templates/play.html', 'static/css/play.css'],
+      },
+      {
+        id: 'player-automark',
+        title: 'Auto-Mark on Call',
+        desc: 'When the host calls a number, all connected player cards that contain it auto-mark the cell in real time via WebSocket push.',
+        status: 'planned',
+        cycle: 'dev2',
+        files: ['static/js/play.js', 'app.py'],
+        deps: ['player-join'],
+      },
+      {
+        id: 'player-claim',
+        title: 'BINGO Claim Button',
+        desc: 'Player taps BINGO; server emits bingo_claimed event; controller receives an alert showing the player name. Host confirms or dismisses.',
+        status: 'planned',
+        cycle: 'dev2',
+        files: ['static/js/play.js', 'static/js/controller.js', 'app.py'],
+        deps: ['player-join'],
+      },
+      {
+        id: 'player-session',
+        title: 'Session Persistence',
+        desc: 'Socket ID → player name + card stored server-side. Browser cookie allows a player to rejoin after a page reload without losing their card.',
+        status: 'planned',
+        cycle: 'dev2',
+        files: ['app.py'],
+        deps: ['player-join'],
+      },
+      {
+        id: 'player-roster',
+        title: 'Player Roster on Controller',
+        desc: 'Controller shows a live list of connected players. Highlights who has claimed BINGO. Allows host to kick a stale session.',
+        status: 'planned',
+        cycle: 'dev2',
+        files: ['templates/controller.html', 'static/js/controller.js'],
+        deps: ['player-join', 'player-claim'],
+      },
+    ],
+  },
+  {
+    module: 'Polish',
+    items: [
+      {
+        id: 'polish-qr',
+        title: 'QR Code on Display',
+        desc: 'A small QR code in the corner of the TV display links players directly to the /play join page, so no one needs to type a URL.',
+        status: 'planned',
+        cycle: 'dev3',
+        files: ['templates/display.html'],
+        deps: ['player-join'],
+      },
+      {
+        id: 'polish-themes',
+        title: 'Themed Ball Sets',
+        desc: 'Optional label skins (Christmas, Halloween, etc.) overlaid on the standard number set. Theme selected by host on controller before the game.',
+        status: 'future',
+        cycle: null,
+        files: ['bingo/game.py', 'app.py'],
+      },
+    ],
+  },
+];
+
+// ── Render board ─────────────────────────────────────────────────────────────
+
+function badgeClass(status) {
+  return `badge badge-${status}`;
+}
+
+function renderBoard() {
+  const board = document.getElementById('board');
+  board.innerHTML = '';
+  for (const mod of roadmap) {
+    const col = document.createElement('div');
+    col.className = 'module';
+    col.innerHTML = `<div class="module-title">${mod.module}</div><div class="cards" id="cards-${mod.module}"></div>`;
+    board.appendChild(col);
+    const cardsEl = col.querySelector('.cards');
+    for (const card of mod.items) {
+      const el = document.createElement('div');
+      el.className = 'card';
+      el.dataset.status = card.status;
+      el.dataset.id = card.id;
+      el.innerHTML = `
+        <div class="card-header">
+          <div class="card-title">${card.title}</div>
+          <span class="${badgeClass(card.status)}">${card.status}</span>
+        </div>
+        ${card.cycle ? `<div class="card-cycle">${card.cycle}</div>` : ''}
+        <div class="card-desc">${card.desc.length > 90 ? card.desc.slice(0, 90) + '…' : card.desc}</div>
+      `;
+      el.addEventListener('click', () => openCard(card));
+      cardsEl.appendChild(el);
+    }
+  }
+}
+
+// ── Card detail ──────────────────────────────────────────────────────────────
+
+function openCard(card) {
+  document.getElementById('modal-title').textContent = card.title;
+  const badge = document.getElementById('modal-badge');
+  badge.textContent = card.status;
+  badge.className = badgeClass(card.status);
+  document.getElementById('modal-meta').textContent =
+    [card.cycle ? `Cycle: ${card.cycle}` : null, card.deps ? `Deps: ${card.deps.join(', ')}` : null]
+      .filter(Boolean).join('  ·  ');
+  document.getElementById('modal-desc').textContent = card.desc;
+  const filesEl = document.getElementById('modal-files');
+  filesEl.innerHTML = (card.files || []).map(f => `<span class="file-pill">${f}</span>`).join('');
+  document.getElementById('modal-files-section').style.display = card.files?.length ? '' : 'none';
+  document.getElementById('card-overlay').classList.remove('hidden');
+}
+
+function closeOverlay(id) {
+  document.getElementById(id).classList.add('hidden');
+}
+
+function closeCard(e) {
+  if (e.target.classList.contains('overlay')) {
+    e.target.classList.add('hidden');
+  }
+}
+
+// ── Changelog ────────────────────────────────────────────────────────────────
+
+function openChangelog() {
+  const body = document.getElementById('changelog-body');
+  body.innerHTML = changelogData.map(entry => `
+    <div class="changelog-entry">
+      <h2>${entry.version} — ${entry.date}</h2>
+      ${entry.sections.map(s => `
+        <div class="modal-section">
+          <h3>${s.title}</h3>
+          <ul>${s.items.map(i => `<li>${i}</li>`).join('')}</ul>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+  document.getElementById('changelog-overlay').classList.remove('hidden');
+}
+
+// ── Checklist ────────────────────────────────────────────────────────────────
+
+const STORAGE_KEY = 'bingo-night-checklist';
+
+function loadChecks() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+  catch { return {}; }
+}
+
+function saveCheck(id, val) {
+  const data = loadChecks();
+  data[id] = val;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function openChecklist() {
+  const saved = loadChecks();
+  const body = document.getElementById('checklist-body');
+  body.innerHTML = checklistData.map(group => `
+    <div class="checklist-group">
+      <h3>${group.group}</h3>
+      ${group.items.map(item => `
+        <div class="checklist-item">
+          <input type="checkbox" id="${item.id}" ${saved[item.id] ? 'checked' : ''}
+            onchange="saveCheck('${item.id}', this.checked)">
+          <label for="${item.id}">${item.label}</label>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+  document.getElementById('checklist-overlay').classList.remove('hidden');
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+renderBoard();
+</script>
+</body>
+</html>
