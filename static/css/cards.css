@@ -1,0 +1,152 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f5f5f5;
+  color: #111;
+}
+
+/* On-screen controls */
+.controls {
+  max-width: 500px;
+  margin: 1.5rem auto;
+  padding: 1.25rem 1.5rem;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.1);
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+
+.controls h1 {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #1a1a2e;
+}
+
+.control-row {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+
+.control-row label { font-size: .95rem; }
+
+.control-row input {
+  width: 70px;
+  padding: .4rem .5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.btn-row {
+  display: flex;
+  gap: .5rem;
+}
+
+.btn {
+  padding: .6rem 1.2rem;
+  border: none;
+  border-radius: 7px;
+  font-size: .95rem;
+  font-weight: 700;
+  cursor: pointer;
+  background: #1a1a2e;
+  color: #fff;
+  transition: opacity .15s;
+}
+
+.btn:hover { opacity: .85; }
+.btn-print { background: #27ae60; }
+
+.hint { font-size: .8rem; color: #888; }
+
+/* Card grid */
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.2rem;
+  padding: 1rem 1rem 3rem;
+}
+
+.bingo-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.12);
+  padding: 12px;
+  width: 260px;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.card-id {
+  text-align: center;
+  font-size: .7rem;
+  color: #aaa;
+  margin-bottom: 4px;
+}
+
+.card-header {
+  display: flex;
+  margin-bottom: 4px;
+}
+
+.card-header-cell {
+  flex: 1;
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 900;
+  padding: 4px 0;
+  color: #fff;
+  border-radius: 4px;
+  margin: 0 1px;
+}
+
+.card-row {
+  display: flex;
+  margin-bottom: 2px;
+}
+
+.card-cell {
+  flex: 1;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 6px 2px;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 1px;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-cell.free {
+  background: #f9ca24;
+  font-size: .65rem;
+  font-weight: 900;
+  letter-spacing: .05em;
+  color: #111;
+}
+
+/* Print styles */
+@media print {
+  .no-print { display: none !important; }
+
+  body { background: #fff; }
+
+  .cards-container {
+    padding: 0;
+    gap: .6rem;
+  }
+
+  .bingo-card {
+    box-shadow: none;
+    border: 1px solid #ccc;
+    width: 48%;
+  }
+}

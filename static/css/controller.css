@@ -1,0 +1,222 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0f0f1a;
+  --surface: #1a1a2e;
+  --accent: #f9ca24;
+  --text: #f0f0f0;
+  --muted: #888;
+  --danger: #e74c3c;
+  --safe: #27ae60;
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', Arial, sans-serif;
+  min-height: 100dvh;
+}
+
+#app {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 1rem 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid #2a2a3e;
+}
+
+header h1 {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--accent);
+  letter-spacing: .1em;
+}
+
+.display-link {
+  font-size: .8rem;
+  color: var(--muted);
+  text-decoration: none;
+  border: 1px solid #333;
+  padding: .25rem .6rem;
+  border-radius: 4px;
+}
+
+.display-link:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Current ball */
+.current-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .4rem;
+}
+
+.current-ball {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #2a2a2a;
+  transition: background .3s, transform .2s;
+  line-height: 1;
+}
+
+.current-ball:not(.idle) { transform: scale(1.05); }
+
+.ball-letter { font-size: 3.2rem; font-weight: 900; color: #fff; }
+.ball-number { font-size: 2.2rem; font-weight: 700; color: rgba(255,255,255,.88); }
+
+.ball-name {
+  font-size: 1rem;
+  color: var(--muted);
+  letter-spacing: .05em;
+  height: 1.4em;
+}
+
+/* Progress */
+.progress-bar-wrap {
+  height: 8px;
+  background: #222;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 4px;
+  transition: width .4s;
+}
+
+.progress-label {
+  text-align: center;
+  font-size: .8rem;
+  color: var(--muted);
+  margin-top: .2rem;
+}
+
+/* Controls */
+.controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: .6rem;
+}
+
+.btn {
+  padding: .85rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity .15s, transform .1s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:active { transform: scale(.96); }
+.btn:disabled { opacity: .35; cursor: not-allowed; }
+
+.btn-call {
+  grid-column: 1 / -1;
+  font-size: 1.3rem;
+  padding: 1.1rem;
+  background: var(--accent);
+  color: #111;
+}
+
+.btn-undo { background: #2a2a3e; color: var(--text); }
+.btn-reset { background: #2a2a3e; color: var(--danger); }
+
+/* Called section */
+.called-section h2 {
+  font-size: .85rem;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--muted);
+  margin-bottom: .5rem;
+}
+
+.called-columns {
+  display: flex;
+  gap: .4rem;
+}
+
+.called-col { flex: 1; }
+
+.called-col-header {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 900;
+  margin-bottom: .25rem;
+}
+
+.called-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.called-num {
+  text-align: center;
+  background: var(--surface);
+  border-radius: 5px;
+  padding: .2rem .1rem;
+  font-size: .85rem;
+  font-weight: 600;
+}
+
+.called-num.latest {
+  outline: 2px solid var(--accent);
+}
+
+.card-gen-link {
+  text-align: center;
+  margin-top: .5rem;
+}
+
+.card-gen-link a {
+  color: var(--muted);
+  font-size: .85rem;
+  text-decoration: none;
+  border-bottom: 1px dashed #444;
+}
+
+.card-gen-link a:hover { color: var(--accent); }
+
+/* Modal */
+.modal {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal.hidden { display: none; }
+
+.modal-box {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 1.5rem;
+  max-width: 300px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+
+.modal-box p { font-size: 1rem; line-height: 1.4; }

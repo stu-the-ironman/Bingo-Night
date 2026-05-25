@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bingo Night — Display</title>
+  <link rel="stylesheet" href="/static/css/display.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- Header -->
+    <header>
+      <div class="header-title">BINGO NIGHT</div>
+      <div id="progress-info" class="progress-info">
+        <span id="called-count">0</span> / 75 called
+      </div>
+    </header>
+
+    <!-- Current ball -->
+    <section class="current-section">
+      <div id="current-ball" class="current-ball idle">
+        <span class="ball-letter" id="ball-letter">?</span>
+        <span class="ball-number" id="ball-number"></span>
+      </div>
+      <div id="waiting-msg" class="waiting-msg">Waiting for first call…</div>
+    </section>
+
+    <!-- Called numbers board — one column per letter -->
+    <section class="board-section">
+      <div class="board">
+        <div class="board-col" id="col-B">
+          <div class="col-header" style="background:#e74c3c">B</div>
+          <div class="col-cells" id="cells-B"></div>
+        </div>
+        <div class="board-col" id="col-I">
+          <div class="col-header" style="background:#e67e22">I</div>
+          <div class="col-cells" id="cells-I"></div>
+        </div>
+        <div class="board-col" id="col-N">
+          <div class="col-header" style="background:#27ae60">N</div>
+          <div class="col-cells" id="cells-N"></div>
+        </div>
+        <div class="board-col" id="col-G">
+          <div class="col-header" style="background:#2980b9">G</div>
+          <div class="col-cells" id="cells-G"></div>
+        </div>
+        <div class="board-col" id="col-O">
+          <div class="col-header" style="background:#8e44ad">O</div>
+          <div class="col-cells" id="cells-O"></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="/static/js/display.js"></script>
+</body>
+</html>
