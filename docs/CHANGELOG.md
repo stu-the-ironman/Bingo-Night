@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.1.0-dev3 — 2026-05-26
+
+### Added
+
+- `bingo/tts.py` — `BingoTTS`: wraps Piper TTS voice model; `generate_all()` pre-generates WAV clips for all 75 balls + `bingo.wav`, `new_game.wav`, `all_called.wav` into `static/audio/`.
+- `scripts/download_voice.py` — one-command helper to fetch the Piper `en_US-lessac-medium` voice model from HuggingFace into `models/`.
+- `requirements.txt` — added `piper-tts`.
+- `app.py` — `_init_tts()` startup function; `tts_available` / `tts_enabled` globals; `tts_toggle` SocketIO handler broadcasts `tts_state` to all clients; `on_connect` now emits `tts_state`; version bumped to `v0.1.0-dev3`.
+- Display: `<audio id="tts-audio">` element; TTS indicator (🔊/🔇) in header; `display.js` plays ball WAV on each new call, `bingo.wav` on winner, `all_called.wav` on completion; handles `tts_state` event.
+- Controller: TTS toggle button (🔇/🔊) in header; wired to `tts_toggle` SocketIO event; hidden when TTS unavailable.
+- Controller: Cast to TV section — `PresentationRequest` API triggers native Chromecast/AirPlay picker; falls back to QR code + Copy URL button when Presentation API unavailable or declined.
+- `.gitignore` — added `models/` and `static/audio/` so generated audio and voice model binaries stay out of the repo.
+
 ## v0.1.0-dev2 — 2026-05-25
 
 ### Added

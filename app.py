@@ -1,10 +1,17 @@
+import logging
+import os
+from pathlib import Path
+
 from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO, emit
 from bingo.game import BingoGame
 from bingo.card_generator import generate_cards
 from bingo.session import PlayerRegistry
 
-APP_VERSION = 'v0.1.0-dev2'
+log = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
+
+APP_VERSION = 'v0.1.0-dev3'
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'bingo-night-secret'
@@ -13,6 +20,28 @@ socketio = SocketIO(app, cors_allowed_origins='*', async_mode='threading')
 game     = BingoGame()
 registry = PlayerRegistry()
 game_won = False   # cleared on reset; prevents duplicate bingo_winner broadcasts
+
+# TTS state — populated by _init_tts() at startup
+_tts          = None
+tts_available = False
+tts_enabled   = False
+
+
+def _init_tts() -> None:
+    global _tts, tts_available
+    model_path = os.environ.get('PIPER_MODEL', 'models/en_US-lessac-medium.onnx')
+    if not Path(model_path).exists():
+        log.warning("Piper model not found at %s — TTS disabled. "
+                    "Run: python scripts/download_voice.py", model_path)
+        return
+    try:
+        from bingo.tts import BingoTTS
+        _tts = BingoTTS(model_path)
+        count = _tts.generate_all()
+        tts_available = True
+        log.info("TTS ready — %d audio file(s) generated.", count)
+    except Exception as exc:
+        log.warning("TTS init failed: %s — TTS disabled.", exc)
 
 
 # ---------------------------------------------------------------------------
@@ -57,6 +86,7 @@ def api_cards():
 def on_connect():
     emit('state', game.state())
     emit('player_list', registry.player_list())
+    emit('tts_state', {'enabled': tts_enabled, 'available': tts_available})
 
 
 @socketio.on('disconnect')
@@ -90,6 +120,16 @@ def on_reset():
         socketio.emit('new_card', {'card': card}, to=sid)
     socketio.emit('state', game.state())
     socketio.emit('player_list', registry.player_list())
+
+
+@socketio.on('tts_toggle')
+def on_tts_toggle():
+    global tts_enabled
+    if not tts_available:
+        emit('tts_state', {'enabled': False, 'available': False})
+        return
+    tts_enabled = not tts_enabled
+    socketio.emit('tts_state', {'enabled': tts_enabled, 'available': tts_available})
 
 
 # ---------------------------------------------------------------------------
@@ -141,4 +181,5 @@ def on_claim_bingo(data):
 
 
 if __name__ == '__main__':
+    _init_tts()
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)

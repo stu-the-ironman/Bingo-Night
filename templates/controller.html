@@ -11,7 +11,10 @@
 
     <header>
       <h1>Bingo Night</h1>
-      <a href="/display" target="_blank" class="display-link">Open Display</a>
+      <div class="header-actions">
+        <button id="btn-tts" class="btn-icon" title="Toggle voice announcements" style="display:none">🔇</button>
+        <a href="/display" target="_blank" class="display-link">Open Display</a>
+      </div>
     </header>
 
     <!-- Current call -->
@@ -75,6 +78,16 @@
       </div>
     </section>
 
+    <!-- Cast to TV -->
+    <section class="cast-section">
+      <button id="btn-cast" class="btn btn-cast">Cast to TV</button>
+      <div id="cast-qr" class="cast-qr hidden">
+        <p class="cast-qr-label">Scan to open display on another device</p>
+        <div id="qr-canvas"></div>
+        <button id="btn-copy-url" class="btn-copy-url">Copy Display URL</button>
+      </div>
+    </section>
+
     <!-- Link to card generator -->
     <div class="card-gen-link">
       <a href="/cards" target="_blank">Print Bingo Cards</a>
@@ -98,6 +111,7 @@
   </div>
 
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <script src="/static/js/controller.js"></script>
 </body>
 </html>

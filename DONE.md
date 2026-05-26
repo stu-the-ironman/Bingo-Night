@@ -1,5 +1,29 @@
 # DONE
 
+## dev3 — TTS + Casting
+
+**Shipped:** 2026-05-26
+
+### Backend
+
+- `bingo/tts.py` — `BingoTTS` class wraps Piper TTS (`piper-tts` PyPI package). `generate_all(force=False)` pre-generates all 75 ball WAVs (`static/audio/balls/{ball}.wav`) plus `bingo.wav`, `new_game.wav`, `all_called.wav`. Skips existing files unless `force=True`. Returns count of generated files.
+- `app.py` — `_init_tts()` reads `PIPER_MODEL` env var (default `models/en_US-lessac-medium.onnx`); logs warning and sets `tts_available=False` if model missing. `tts_toggle` SocketIO event flips `tts_enabled` and broadcasts `tts_state {enabled, available}` to all clients. `on_connect` now emits `tts_state` so display page syncs on load. Version bumped to `v0.1.0-dev3`.
+- `scripts/download_voice.py` — downloads `.onnx` + `.onnx.json` for Piper `en_US-lessac-medium` voice from HuggingFace; accepts custom voice path and stem as CLI args.
+- `requirements.txt` — `piper-tts` added.
+- `.gitignore` — `models/` and `static/audio/` excluded from version control.
+
+### Display (`/display`)
+
+- `<audio id="tts-audio" preload="none">` element added.
+- TTS indicator (🔊/🔇) shown in header when TTS is available; reflects enabled state.
+- `display.js` tracks `_lastBall`; plays `static/audio/balls/{ball}.wav` when `current` changes, `bingo.wav` on `bingo_winner`, `all_called.wav` on `all_called`. Handles `tts_state` event to update `ttsEnabled` flag and indicator text.
+
+### Controller (`/`)
+
+- TTS toggle button (🔇/🔊) added to header; hidden when `tts_available=false`; emits `tts_toggle` on click.
+- Cast to TV section: `PresentationRequest` API used for native Chromecast/AirPlay device picker. `getAvailability()` updates button label to show 📺 when devices are detected. Falls back to QR code (qrcodejs CDN) + Copy URL button when Presentation API is absent or picker is dismissed/rejected.
+- `controller.css` — `.header-actions` flex wrapper; `.btn-icon` for TTS button; `.cast-section`, `.cast-qr`, `.btn-cast`, `.btn-copy-url` styles.
+
 ## dev2 — Player App
 
 **Shipped:** 2026-05-25

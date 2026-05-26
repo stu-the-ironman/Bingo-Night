@@ -3,6 +3,7 @@ const COLORS = { B: '#e74c3c', I: '#e67e22', N: '#27ae60', G: '#2980b9', O: '#8e
 const btnCall  = document.getElementById('btn-call');
 const btnUndo  = document.getElementById('btn-undo');
 const btnReset = document.getElementById('btn-reset');
+const btnTts   = document.getElementById('btn-tts');
 const modal    = document.getElementById('reset-modal');
 
 const socket = io();
@@ -10,6 +11,7 @@ const socket = io();
 socket.on('state', applyState);
 socket.on('player_list', applyPlayerList);
 socket.on('bingo_winner', applyWinner);
+socket.on('tts_state', applyTtsState);
 socket.on('all_called', () => {
   btnCall.disabled = true;
   btnCall.textContent = 'All Called!';
@@ -18,11 +20,11 @@ socket.on('all_called', () => {
 btnCall.addEventListener('click', () => socket.emit('call_next'));
 btnUndo.addEventListener('click', () => socket.emit('undo'));
 btnReset.addEventListener('click', () => modal.classList.remove('hidden'));
+btnTts.addEventListener('click', () => socket.emit('tts_toggle'));
 
 document.getElementById('confirm-reset').addEventListener('click', () => {
   socket.emit('reset');
   modal.classList.add('hidden');
-  // Clear winner banner on new game
   document.getElementById('winner-banner').classList.add('hidden');
 });
 
@@ -33,6 +35,18 @@ document.getElementById('cancel-reset').addEventListener('click', () => {
 document.getElementById('btn-dismiss-winner').addEventListener('click', () => {
   document.getElementById('winner-banner').classList.add('hidden');
 });
+
+// ── TTS toggle ───────────────────────────────────────────────────────────────
+
+function applyTtsState(data) {
+  if (!data.available) {
+    btnTts.style.display = 'none';
+    return;
+  }
+  btnTts.style.display = 'inline-flex';
+  btnTts.textContent = data.enabled ? '🔊' : '🔇';
+  btnTts.title = data.enabled ? 'Voice on — tap to mute' : 'Voice off — tap to enable';
+}
 
 // ── Game state ──────────────────────────────────────────────────────────────
 
@@ -123,3 +137,57 @@ function applyWinner(data) {
   document.getElementById('winner-banner-name').textContent = data.name;
   document.getElementById('winner-banner').classList.remove('hidden');
 }
+
+// ── Cast to TV ───────────────────────────────────────────────────────────────
+
+const displayUrl = `${location.origin}/display`;
+const btnCast = document.getElementById('btn-cast');
+const castQr  = document.getElementById('cast-qr');
+let _qrBuilt  = false;
+
+let presentationReq = null;
+if (window.PresentationRequest) {
+  try {
+    presentationReq = new PresentationRequest([displayUrl]);
+    presentationReq.getAvailability().then(avail => {
+      updateCastBtn(avail.value);
+      avail.onchange = () => updateCastBtn(avail.value);
+    }).catch(() => {});
+  } catch (_) {}
+}
+
+function updateCastBtn(hasDevices) {
+  btnCast.textContent = hasDevices ? 'Cast to TV 📺' : 'Cast to TV';
+}
+
+btnCast.addEventListener('click', () => {
+  if (presentationReq) {
+    presentationReq.start().catch(() => toggleQr());
+  } else {
+    toggleQr();
+  }
+});
+
+function toggleQr() {
+  const hidden = castQr.classList.toggle('hidden');
+  if (!hidden && !_qrBuilt) {
+    new QRCode(document.getElementById('qr-canvas'), {
+      text: displayUrl,
+      width: 180,
+      height: 180,
+      colorDark: '#000',
+      colorLight: '#fff',
+    });
+    _qrBuilt = true;
+  }
+}
+
+document.getElementById('btn-copy-url').addEventListener('click', () => {
+  const btn = document.getElementById('btn-copy-url');
+  navigator.clipboard.writeText(displayUrl).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = 'Copy Display URL'; }, 2000);
+  }).catch(() => {
+    btn.textContent = displayUrl;
+  });
+});

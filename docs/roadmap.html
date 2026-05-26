@@ -316,7 +316,7 @@
 <header class="site-header">
   <div>
     <h1>Bingo Night</h1>
-    <p class="subtitle">v0.1.0-dev2 &mdash; 2026-05-25 &mdash; Player app shipped</p>
+    <p class="subtitle">v0.1.0-dev3 &mdash; 2026-05-26 &mdash; TTS + Casting shipped</p>
   </div>
   <div class="header-actions">
     <button class="hdr-btn" onclick="openChangelog()">Changelog</button>
@@ -376,6 +376,25 @@
 // ── Data ────────────────────────────────────────────────────────────────────
 
 const changelogData = [
+  {
+    version: 'v0.1.0-dev3',
+    date: '2026-05-26',
+    sections: [
+      {
+        title: 'Added',
+        items: [
+          'bingo/tts.py — BingoTTS: wraps Piper TTS; pre-generates WAVs for all 75 balls + bingo/new_game/all_called clips at startup',
+          'scripts/download_voice.py — one-command helper to fetch en_US-lessac-medium voice model from HuggingFace',
+          'requirements.txt — piper-tts added',
+          'app.py — _init_tts() startup; tts_available/tts_enabled globals; tts_toggle SocketIO handler; on_connect emits tts_state; version v0.1.0-dev3',
+          'Display: <audio> element; TTS indicator (🔊/🔇) in header; plays ball WAV on each call, bingo.wav on winner, all_called.wav on completion',
+          'Controller: TTS toggle button (🔇/🔊) in header; hidden when TTS unavailable; emits tts_toggle on click',
+          'Controller: Cast to TV — PresentationRequest API for native Chromecast/AirPlay picker; QR code (qrcodejs) + Copy URL fallback',
+          '.gitignore — models/ and static/audio/ excluded so binaries and generated audio stay out of the repo',
+        ],
+      },
+    ],
+  },
   {
     version: 'v0.1.0-dev2',
     date: '2026-05-25',
@@ -491,6 +510,20 @@ const checklistData = [
     ],
   },
   {
+    group: 'TTS & Casting',
+    items: [
+      { id: 'cl-tts-toggle-hidden', label: 'TTS button hidden when Piper model not installed' },
+      { id: 'cl-tts-toggle-on', label: 'Tap TTS button: display plays audio on next call' },
+      { id: 'cl-tts-toggle-off', label: 'Tap TTS button again: display goes silent' },
+      { id: 'cl-tts-indicator', label: 'Display header shows 🔊/🔇 indicator matching toggle state' },
+      { id: 'cl-tts-bingo', label: 'bingo.wav plays on TV when BINGO winner announced' },
+      { id: 'cl-tts-allcalled', label: 'all_called.wav plays when all 75 numbers called' },
+      { id: 'cl-cast-btn', label: 'Cast to TV button visible on controller' },
+      { id: 'cl-cast-qr', label: 'QR code appears when Cast button tapped (no Presentation API)' },
+      { id: 'cl-cast-copy', label: 'Copy Display URL button copies display URL to clipboard' },
+    ],
+  },
+  {
     group: 'Controller — Players & Winner',
     items: [
       { id: 'cl-ctrl-roster', label: 'Player roster shows connected players as pills' },
@@ -542,12 +575,21 @@ const roadmap = [
         files: ['templates/display.html', 'static/js/display.js'],
       },
       {
-        id: 'caller-sounds',
-        title: 'Sound Effects',
-        desc: 'Short audio cue played in the browser on each ball call. Uses the Web Audio API — no server-side dependencies.',
-        status: 'planned',
+        id: 'caller-tts',
+        title: 'Piper TTS Voice Announcements',
+        desc: 'Server-side offline TTS using Piper (ONNX model). Pre-generates WAV clips for all 75 balls and special events at startup. Display page plays audio via <audio> element on each new call.',
+        status: 'shipped',
         cycle: 'dev3',
-        files: ['static/js/controller.js'],
+        files: ['bingo/tts.py', 'app.py', 'static/js/display.js', 'templates/display.html', 'scripts/download_voice.py'],
+      },
+      {
+        id: 'caller-tts-toggle',
+        title: 'TTS Toggle on Controller',
+        desc: 'Host can mute/unmute voice announcements mid-game with a 🔊/🔇 button in the controller header. Toggle state broadcast to display so indicator stays in sync. Gracefully hidden when Piper model is not installed.',
+        status: 'shipped',
+        cycle: 'dev3',
+        files: ['templates/controller.html', 'static/js/controller.js', 'static/css/controller.css', 'app.py'],
+        deps: ['caller-tts'],
       },
     ],
   },
@@ -632,6 +674,14 @@ const roadmap = [
         cycle: 'dev3',
         files: ['templates/display.html'],
         deps: ['player-join'],
+      },
+      {
+        id: 'polish-cast',
+        title: 'Cast to TV',
+        desc: 'Controller Cast to TV button uses the W3C Presentation API to trigger the native Chromecast/AirPlay device picker. Falls back to a QR code + Copy URL panel when the API is unavailable or the picker is dismissed.',
+        status: 'shipped',
+        cycle: 'dev3',
+        files: ['templates/controller.html', 'static/js/controller.js', 'static/css/controller.css'],
       },
       {
         id: 'polish-themes',

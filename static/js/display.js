@@ -17,8 +17,25 @@ for (const [letter, [lo, hi]] of Object.entries(RANGES)) {
   }
 }
 
+// TTS
+let ttsEnabled = false;
+const ttsAudio = document.getElementById('tts-audio');
+
+function playClip(path) {
+  if (!ttsEnabled) return;
+  ttsAudio.src = path;
+  ttsAudio.play().catch(() => {});
+}
+
+let _lastBall = null;
+
 function applyState(state) {
   const { current, called } = state;
+
+  if (current && current !== _lastBall) {
+    playClip(`/static/audio/balls/${current}.wav`);
+  }
+  _lastBall = current;
 
   // Reset all cells
   for (const el of Object.values(cellMap)) {
@@ -70,14 +87,29 @@ function applyState(state) {
 
 const socket = io();
 socket.on('state', applyState);
-socket.on('all_called', () => {
-  document.getElementById('waiting-msg').textContent = 'All 75 balls called!';
-  document.getElementById('waiting-msg').style.opacity = '1';
+
+socket.on('tts_state', data => {
+  ttsEnabled = data.enabled;
+  const indicator = document.getElementById('tts-indicator');
+  if (data.available) {
+    indicator.style.display = 'block';
+    indicator.textContent = data.enabled ? '🔊' : '🔇';
+  } else {
+    indicator.style.display = 'none';
+  }
 });
+
+socket.on('all_called', () => {
+  const waitMsg = document.getElementById('waiting-msg');
+  waitMsg.textContent = 'All 75 balls called!';
+  waitMsg.style.opacity = '1';
+  playClip('/static/audio/all_called.wav');
+});
+
 socket.on('bingo_winner', data => {
   const overlay = document.getElementById('winner-overlay');
   document.getElementById('winner-display-name').textContent = `${data.name} wins!`;
   overlay.style.display = 'flex';
-  // Auto-dismiss after 15 seconds
+  playClip('/static/audio/bingo.wav');
   setTimeout(() => { overlay.style.display = 'none'; }, 15000);
 });

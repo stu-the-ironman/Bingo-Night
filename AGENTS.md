@@ -4,14 +4,25 @@ These rules apply to any automation or agent working in this repo.
 
 ## Current Project State
 
-- Current cycle: `v0.1.0-dev2` — **Player app shipped.** Family members can join on their phone/tablet, get a card, have numbers auto-marked, and claim BINGO. Server auto-verifies wins against all 12 lines. Host controller shows live player roster and winner banner. TV display shows winner overlay.
+- Current cycle: `v0.1.0-dev3` — **TTS + Casting shipped.** Piper TTS pre-generates offline voice clips for all 75 balls and special events. Display page plays audio on each call. Controller has a 🔊/🔇 toggle. Cast to TV uses the W3C Presentation API (Chromecast/AirPlay) with a QR code fallback.
 - Public/stable baseline: none yet (pre-release).
+- `dev3` shipped: `bingo/tts.py` BingoTTS class (Piper TTS wrapper). `scripts/download_voice.py` model downloader. `app.py`: `_init_tts()` startup; `tts_toggle` SocketIO handler; `tts_state` broadcast; version `v0.1.0-dev3`. Display: `<audio>` element, TTS indicator, plays ball/bingo/all_called WAVs. Controller: TTS toggle button, Cast to TV with PresentationRequest API + QR fallback. `.gitignore`: `models/` and `static/audio/` excluded.
 - `dev2` shipped: `bingo/session.py` PlayerRegistry (join, rejoin, disconnect, claim, reset_cards, thread-safe). `/play` route + `play.html`/`play.css`/`play.js` player app (loading→join→card screens, localStorage rejoin, auto-mark with pop animation, BINGO claim button, toast feedback, winner overlay). Controller: player roster (live pills with connected/claimed state), winner banner with dismiss. Display: winner overlay (auto-dismisses 15s). `app.py`: `join`, `rejoin`, `disconnect`, `claim_bingo` SocketIO events; `game_won` flag prevents duplicate broadcasts; reset pushes new cards to all players.
 - `dev1` shipped: Initial project scaffold. Flask + Flask-SocketIO backend. `/display` full-screen TV caller (75-ball board, colour-coded columns, live current-ball highlight). `/` mobile controller (Call Next, Undo, New Game with confirmation, progress bar, per-column called list). `/cards` printable card generator (configurable count 1–30, 5×5 FREE-centre cards, 2-per-page print layout, colour-coded BINGO headers). `bingo/game.py` game state (draw without replacement, undo, reset). `bingo/card_generator.py` standard B-I-N-G-O column ranges.
 - Issue tracker: use GitHub issues on `stu-the-ironman/bingo-night`.
 - Primary planning source is `TODO.md`; shipped scope is tracked in `DONE.md`; release-facing history is `docs/CHANGELOG.md`.
 
 ## Immediate Handoff Priorities
+
+### Phase 3 — TTS + Casting (SHIPPED dev3)
+
+| Task | File(s) | Status |
+|------|---------|--------|
+| Piper TTS offline voice announcements | `bingo/tts.py`, `app.py` | **SHIPPED** |
+| TTS toggle button on controller | `controller.html`, `controller.js`, `controller.css` | **SHIPPED** |
+| Audio playback on display | `display.html`, `display.js` | **SHIPPED** |
+| Cast to TV (Presentation API + QR fallback) | `controller.html`, `controller.js`, `controller.css` | **SHIPPED** |
+| Voice model download helper | `scripts/download_voice.py` | **SHIPPED** |
 
 ### Phase 2 — Player App (SHIPPED dev2)
 
@@ -24,14 +35,14 @@ These rules apply to any automation or agent working in this repo.
 | Player list on controller — live roster with claimed state | `templates/controller.html`, `static/js/controller.js` | **SHIPPED** |
 | Winner banner on controller + overlay on display | `controller.html`, `display.html`, `display.js` | **SHIPPED** |
 
-### Phase 3 — Polish (MEDIUM)
+### Remaining Polish Items (Future)
 
 | Task | File(s) | Status |
 |------|---------|--------|
-| Sound effects — ball call audio cue | `static/js/controller.js`, `static/sounds/` | Planned |
-| Themed ball sets — custom label overlays (e.g. holiday themes) | `bingo/game.py`, `app.py` | Planned |
-| QR code on display — scan to join as a player | `templates/display.html` | Planned |
+| QR code on display — scan to join as player | `templates/display.html` | Planned |
+| Themed ball sets — holiday skins | `bingo/game.py`, `app.py` | Planned |
 | Dark/light print option for cards | `static/css/cards.css` | Planned |
+| Caller history scroll on display (last 5 calls) | `display.html`, `display.js` | Planned |
 
 ## Commit Discipline
 

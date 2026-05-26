@@ -12,6 +12,7 @@
     <!-- Header -->
     <header>
       <div class="header-title">BINGO NIGHT</div>
+      <div id="tts-indicator" class="tts-indicator" style="display:none">🔇</div>
       <div id="progress-info" class="progress-info">
         <span id="called-count">0</span> / 75 called
       </div>
@@ -66,6 +67,7 @@
     <div style="font-size:clamp(.7rem,1.5vw,1.1rem);color:#888;margin-top:1vh">Tap anywhere to dismiss</div>
   </div>
 
+  <audio id="tts-audio" preload="none"></audio>
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
   <script src="/static/js/display.js"></script>
 </body>

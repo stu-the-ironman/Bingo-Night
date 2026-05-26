@@ -20,9 +20,13 @@
 - [x] Player list on controller — live roster with connected/claimed state
 - [x] Winner banner on controller; winner overlay on TV display (auto-dismisses 15s)
 
-## dev3 — Polish (Phase 3)
+## dev3 — Polish (Phase 3) (DONE)
 
-- [ ] Sound effects — short audio cue on ball call (browser Web Audio API, no server-side deps)
+- [x] Piper TTS — server-side offline voice announcements; pre-generated WAVs for all 75 balls + special clips
+- [x] TTS toggle button on controller (🔊/🔇); graceful degradation when model not installed
+- [x] TTS indicator on display header; audio plays on call, bingo, and all-called events
+- [x] Cast to TV — Presentation API (Chromecast/AirPlay native picker); QR code fallback with copy URL
+- [x] `scripts/download_voice.py` — one-command model download helper
 - [ ] QR code on display — scan-to-join URL shown in corner of TV display
 - [ ] Themed ball sets — Christmas, Halloween, etc. (label skin over standard numbers)
 - [ ] Dark/light print option for card generator
