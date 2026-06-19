@@ -68,3 +68,16 @@ gantt
 - Themed ball sets (holiday skins)
 - Admin UI for browsing and exporting audit logs
 - Card PDF export (server-side, WeasyPrint)
+
+## Long-Term: Broadcast & TV Integration
+
+The roadmap target is a full broadcast-capable product — a TV channel running Bingo Night as an interactive service with viewers playing along at home.
+
+Key milestones in order:
+
+1. **Internet-scale player support** — Redis SocketIO adapter, persistent player DB, sticky sessions. Target 10k+ concurrent players.
+2. **Broadcast display output** — formal OBS/NDI integration + WebHook push on ball calls for third-party broadcast graphics.
+3. **Broadcast delay compensation** — configurable ball-reveal buffer (5–30 s) on the player app to stay in sync with satellite/DVB-T playout delay.
+4. **HbbTV companion app** — HbbTV 2.0 interactive service delivered via broadcast signal. Powers the Red Button / hybrid experience on Freeview, Sky, and Virgin smart TVs without requiring a phone.
+5. **Server-side card storage** — cards stored at generation time, not trusted from client URLs. Prerequisite for any prize game.
+6. **Regulatory layer** — UKGC licence groundwork, GDPR consent, age verification hooks, prize draw audit trail.

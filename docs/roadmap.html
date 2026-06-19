@@ -753,6 +753,62 @@ const roadmap = [
     ],
   },
   {
+    module: 'Broadcast & TV',
+    items: [
+      {
+        id: 'broadcast-scale',
+        title: 'Internet-Scale Player Support',
+        desc: 'Move from LAN/threading to a horizontally scalable deployment. Redis pub/sub adapter for Flask-SocketIO, sticky sessions or SSE fallback, and a persistent player database (SQLite → Postgres) to survive server restarts. Target: 10k+ concurrent players.',
+        status: 'future',
+        cycle: null,
+        files: ['app.py', 'bingo/session.py'],
+      },
+      {
+        id: 'broadcast-display',
+        title: 'Broadcast Display Output',
+        desc: 'The /display page is already capture-ready for OBS/NDI. Formal integration: a headless Chromium render mode, optional HDMI output configuration, and WebHook push on every ball call so broadcast graphics systems can react independently of the WebSocket client.',
+        status: 'future',
+        cycle: null,
+        files: ['templates/display.html', 'app.py'],
+      },
+      {
+        id: 'broadcast-hbbtv',
+        title: 'HbbTV Companion App',
+        desc: 'HbbTV 2.0 compliant interactive service delivered alongside a broadcast signal. Enables Red Button / hybrid broadband access on Freeview, Sky, and Virgin smart TVs without a phone. Broadcast timeline sync compensates for satellite and DVB-T playout delay.',
+        status: 'future',
+        cycle: null,
+        files: [],
+      },
+      {
+        id: 'broadcast-delay-sync',
+        title: 'Broadcast Delay Compensation',
+        desc: 'Buffer ball reveal on the player app to match the broadcast playout delay (typically 5–8 s for DVB-T, up to 30 s for satellite). Host configures a delay offset on the controller; balls are held client-side and revealed on schedule.',
+        status: 'future',
+        cycle: null,
+        files: ['app.py', 'static/js/play.js'],
+        deps: ['broadcast-scale'],
+      },
+      {
+        id: 'broadcast-anticheat',
+        title: 'Server-Side Card Storage',
+        desc: 'At broadcast scale, card grids must be stored server-side at generation time — not trusted from the client URL. Moves /verify from a stateless client-decode model to a signed card registry lookup. Required before any prize or paid-entry game.',
+        status: 'future',
+        cycle: null,
+        files: ['bingo/card_generator.py', 'bingo/audit.py', 'app.py'],
+        deps: ['broadcast-scale'],
+      },
+      {
+        id: 'broadcast-compliance',
+        title: 'Regulatory & Compliance Layer',
+        desc: 'Prize bingo in the UK requires a UKGC operating licence under the Gambling Act 2005. Free-to-play interactive TV bingo has lighter requirements. This card covers age verification hooks, GDPR consent capture, prize draw audit trail, and operator licensing groundwork.',
+        status: 'future',
+        cycle: null,
+        files: [],
+        deps: ['broadcast-anticheat'],
+      },
+    ],
+  },
+  {
     module: 'Audit & Verification',
     items: [
       {

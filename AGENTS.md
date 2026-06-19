@@ -124,6 +124,19 @@ Add a new card object to the correct module's `items` array:
   - `v0.1.0` will be the first public stable release
   - dev numbering is continuous
 
+## Long-Term Vision: Broadcast & TV
+
+**Confirmed by Stu 2026-06-19:** Bingo Night is intended to eventually operate as a live broadcast interactive service — a TV channel running the game with viewers playing along at home digitally.
+
+Key architectural implications agents should keep in mind:
+
+- **Do not design the player → server link as LAN-only.** Keep WebSocket events clean and documented so a Redis adapter can be dropped in without rewiring JS clients.
+- **Card IDs are already random alphanumeric** (dev5). Do not revert to sequential IDs. When server-side card storage lands, the ID scheme must survive.
+- **The `/verify` stateless QR model is a stepping stone**, not the end state. At broadcast scale, card grids must be stored server-side. The URL-encoded grid works for family game night; it is not appropriate once prizes or a paid audience are involved.
+- **HbbTV** is the target broadcast standard for UK/Europe interactive TV (Freeview, Sky, Virgin). Do not design a bespoke broadcast protocol — build toward HbbTV 2.0 compatibility.
+- **Broadcast delay** (5–30 s for DVB-T/satellite) must be handled by buffering ball reveals on the player app, not by slowing down the caller. The host fires balls at normal pace; the player app holds and reveals them on a configurable timer.
+- **Regulatory note:** Prize bingo in the UK requires a UKGC operating licence. Free-to-play interactive TV bingo does not. Keep the audit log clean and verifiable.
+
 ## Settled Decisions
 
 ### WebSocket Transport — Flask-SocketIO + threading

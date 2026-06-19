@@ -53,3 +53,15 @@
 - [ ] Host password protection
 - [ ] Card PDF export (server-side, e.g. with WeasyPrint)
 - [ ] Admin UI for viewing/exporting session audit logs
+- [ ] Themed ball sets (holiday skins)
+
+## Long-Term: Broadcast & TV Integration
+
+Confirmed direction: Bingo Night is designed to eventually operate as a live broadcast interactive service (TV channel + at-home digital play-along).
+
+- [ ] Internet-scale player support — Redis SocketIO adapter, persistent player DB, 10k+ concurrent connections
+- [ ] Broadcast display output — OBS/NDI integration, WebHook on ball call for broadcast graphics systems
+- [ ] Broadcast delay compensation — configurable ball-reveal buffer on player app to sync with satellite/DVB-T playout delay
+- [ ] HbbTV 2.0 companion app — interactive service alongside broadcast signal; Red Button / hybrid access on Freeview, Sky, Virgin smart TVs
+- [ ] Server-side card storage — cards stored at generation time, not decoded from client URL (prerequisite for prize games)
+- [ ] Regulatory & compliance layer — UKGC licence groundwork, GDPR consent, age verification, prize draw audit trail
