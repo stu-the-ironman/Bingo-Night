@@ -41,6 +41,19 @@ header h1 {
   letter-spacing: .1em;
 }
 
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.site-logo {
+  height: 28px;
+  width: auto;
+}
+
+.site-logo[src=''], .site-logo:not([src]) { display: none; }
+
 .header-actions {
   display: flex;
   align-items: center;
@@ -244,12 +257,48 @@ header h1 {
 .modal-box p { font-size: 1rem; line-height: 1.4; }
 
 /* Players roster */
+.players-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: .5rem;
+}
+
+.play-share-btns {
+  display: flex;
+  gap: .3rem;
+}
+
+.btn-share {
+  background: var(--surface);
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: .72rem;
+  font-weight: 600;
+  padding: .2rem .55rem;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+
+.btn-share:hover { border-color: var(--accent); color: var(--accent); }
+
+.play-qr {
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  margin-bottom: .5rem;
+}
+
+.play-qr.hidden { display: none; }
+
 .players-section h2 {
   font-size: .85rem;
   text-transform: uppercase;
   letter-spacing: .1em;
   color: var(--muted);
-  margin-bottom: .5rem;
   display: flex;
   align-items: center;
   gap: .5rem;

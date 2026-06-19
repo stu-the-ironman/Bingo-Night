@@ -28,7 +28,15 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1vw;
 }
+
+.site-logo {
+  height: clamp(24px, 3vh, 40px);
+  width: auto;
+}
+
+.site-logo[src=''], .site-logo:not([src]) { display: none; }
 
 .header-title {
   font-size: clamp(1.4rem, 3vw, 2.2rem);
@@ -37,6 +45,11 @@ header {
   text-transform: uppercase;
   color: #f9ca24;
   text-shadow: 0 0 20px rgba(249,202,36,.4);
+}
+
+.tts-indicator {
+  font-size: clamp(.9rem, 1.8vw, 1.3rem);
+  opacity: .7;
 }
 
 .progress-info {
@@ -52,6 +65,7 @@ header {
   justify-content: center;
   flex: 0 0 auto;
   padding: .5vh 0;
+  gap: .5vh;
 }
 
 .current-ball {
@@ -68,10 +82,7 @@ header {
   line-height: 1;
 }
 
-.current-ball:not(.idle) {
-  transform: scale(1.04);
-}
-
+.current-ball:not(.idle) { transform: scale(1.04); }
 .current-ball.idle { background: #2a2a2a; box-shadow: none; }
 
 .ball-letter {
@@ -89,10 +100,32 @@ header {
 }
 
 .waiting-msg {
-  margin-top: .6vh;
   font-size: clamp(.8rem, 1.5vw, 1.1rem);
   color: var(--muted);
   letter-spacing: .05em;
+}
+
+/* Caller history */
+.call-history {
+  display: flex;
+  gap: .5vw;
+  justify-content: center;
+  flex-wrap: nowrap;
+  min-height: clamp(28px, 4vh, 48px);
+}
+
+.history-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid;
+  border-radius: 999px;
+  padding: 0 clamp(.4rem, 1vw, .9rem);
+  height: clamp(28px, 4vh, 48px);
+  font-size: clamp(.7rem, 1.3vw, 1rem);
+  font-weight: 700;
+  white-space: nowrap;
+  transition: opacity .3s;
 }
 
 /* Board */
@@ -142,18 +175,15 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,.05);
+  background: rgba(255,255,255,.04);
   border-radius: 6px;
   font-size: clamp(.7rem, 1.8vw, 1.4rem);
   font-weight: 700;
-  color: rgba(255,255,255,.25);
+  /* colour set per-column in display.js */
   transition: background .3s, color .3s, transform .2s;
 }
 
-.board-cell.called {
-  color: #fff;
-  transform: scale(1.06);
-}
+.board-cell.called { transform: scale(1.06); }
 
 .board-cell.latest {
   animation: pulse 1s ease-out;
@@ -163,4 +193,28 @@ header {
   0%   { box-shadow: 0 0 0 0 rgba(255,255,255,.6); }
   70%  { box-shadow: 0 0 0 12px rgba(255,255,255,0); }
   100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+}
+
+/* Scan-to-join QR widget */
+.qr-join {
+  position: fixed;
+  bottom: 1.5vh;
+  right: 1.5vw;
+  background: #fff;
+  border-radius: 10px;
+  padding: 8px 8px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  z-index: 10;
+  box-shadow: 0 4px 20px rgba(0,0,0,.4);
+}
+
+.qr-label {
+  font-size: clamp(.55rem, 1vw, .75rem);
+  font-weight: 700;
+  color: #111;
+  letter-spacing: .04em;
+  text-transform: uppercase;
 }

@@ -138,6 +138,36 @@ function applyWinner(data) {
   document.getElementById('winner-banner').classList.remove('hidden');
 }
 
+// ── Share play link ──────────────────────────────────────────────────────────
+
+const playUrl = `${location.origin}/play`;
+let _playQrBuilt = false;
+
+document.getElementById('btn-copy-play').addEventListener('click', () => {
+  const btn = document.getElementById('btn-copy-play');
+  navigator.clipboard.writeText(playUrl).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = 'Copy Link'; }, 2000);
+  }).catch(() => {
+    btn.textContent = playUrl;
+  });
+});
+
+document.getElementById('btn-qr-play').addEventListener('click', () => {
+  const qr = document.getElementById('play-qr');
+  const nowHidden = qr.classList.toggle('hidden');
+  if (!nowHidden && !_playQrBuilt) {
+    new QRCode(document.getElementById('play-qr-code'), {
+      text: playUrl,
+      width: 160,
+      height: 160,
+      colorDark: '#000000',
+      colorLight: '#ffffff',
+    });
+    _playQrBuilt = true;
+  }
+});
+
 // ── Cast to TV ───────────────────────────────────────────────────────────────
 
 const displayUrl = `${location.origin}/display`;

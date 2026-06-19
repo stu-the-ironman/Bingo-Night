@@ -10,7 +10,10 @@
   <div id="app">
 
     <header>
-      <h1>Bingo Night</h1>
+      <div class="header-left">
+        <img class="site-logo" src="" alt="Bingo Night">
+        <h1>Bingo Night</h1>
+      </div>
       <div class="header-actions">
         <button id="btn-tts" class="btn-icon" title="Toggle voice announcements" style="display:none">🔇</button>
         <a href="/display" target="_blank" class="display-link">Open Display</a>
@@ -45,9 +48,18 @@
 
     <!-- Players roster -->
     <section class="players-section">
-      <h2>Players <span id="player-badge" class="player-badge">0</span></h2>
+      <div class="players-header">
+        <h2>Players <span id="player-badge" class="player-badge">0</span></h2>
+        <div class="play-share-btns">
+          <button id="btn-copy-play" class="btn-share">Copy Link</button>
+          <button id="btn-qr-play" class="btn-share">QR</button>
+        </div>
+      </div>
+      <div id="play-qr" class="play-qr hidden">
+        <div id="play-qr-code"></div>
+      </div>
       <div id="player-list" class="player-list">
-        <div class="no-players">No players yet — share <strong>/play</strong></div>
+        <div class="no-players">No players yet</div>
       </div>
     </section>
 

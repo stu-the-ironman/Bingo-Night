@@ -27,10 +27,15 @@
 - [x] TTS indicator on display header; audio plays on call, bingo, and all-called events
 - [x] Cast to TV — Presentation API (Chromecast/AirPlay native picker); QR code fallback with copy URL
 - [x] `scripts/download_voice.py` — one-command model download helper
-- [ ] QR code on display — scan-to-join URL shown in corner of TV display
-- [ ] Themed ball sets — Christmas, Halloween, etc. (label skin over standard numbers)
-- [ ] Dark/light print option for card generator
-- [ ] `/display` — caller history scroll (last 5 calls shown below current ball)
+
+## dev4 — Display Polish + Sharing (DONE)
+
+- [x] QR code on display — scan-to-join widget fixed bottom-right of TV display
+- [x] Caller history on display — last 5 previous calls shown as coloured chips
+- [x] Share play link on controller — Copy Link + QR toggle in players section header
+- [x] Colour / B&W print toggle on cards — localStorage-persisted preference
+- [x] Logo placeholder in controller and display headers
+- [x] Column-colour numbers on all pages — uncalled/unmarked cells show column colour at reduced opacity
 
 ## Backlog / Future
 

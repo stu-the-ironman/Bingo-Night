@@ -11,6 +11,7 @@
 
     <!-- Header -->
     <header>
+      <img class="site-logo" src="" alt="Bingo Night">
       <div class="header-title">BINGO NIGHT</div>
       <div id="tts-indicator" class="tts-indicator" style="display:none">🔇</div>
       <div id="progress-info" class="progress-info">
@@ -18,13 +19,14 @@
       </div>
     </header>
 
-    <!-- Current ball -->
+    <!-- Current ball + history -->
     <section class="current-section">
       <div id="current-ball" class="current-ball idle">
         <span class="ball-letter" id="ball-letter">?</span>
         <span class="ball-number" id="ball-number"></span>
       </div>
       <div id="waiting-msg" class="waiting-msg">Waiting for first call…</div>
+      <div id="call-history" class="call-history"></div>
     </section>
 
     <!-- Called numbers board — one column per letter -->
@@ -55,6 +57,12 @@
 
   </div>
 
+  <!-- Scan-to-join QR (bottom-right corner) -->
+  <div class="qr-join">
+    <div id="qr-join-code"></div>
+    <div class="qr-label">Scan to join</div>
+  </div>
+
   <!-- Winner overlay for TV -->
   <div id="winner-overlay" style="
     display:none; position:fixed; inset:0; background:rgba(0,0,0,.82);
@@ -69,6 +77,7 @@
 
   <audio id="tts-audio" preload="none"></audio>
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <script src="/static/js/display.js"></script>
 </body>
 </html>

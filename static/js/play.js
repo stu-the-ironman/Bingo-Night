@@ -144,6 +144,7 @@ function renderCard() {
         cell.style.color = '#111';
       } else {
         cell.textContent = val;
+        cell.style.color = `${COLORS[LETTERS[c]]}99`;
       }
       rowEl.appendChild(cell);
     }
@@ -171,7 +172,7 @@ function updateMarks() {
         cell.style.color = '#fff';
       } else {
         cell.style.background = '';
-        cell.style.color = '';
+        cell.style.color = `${COLORS[LETTERS[c]]}99`;
       }
 
       if (isNew) {

@@ -60,6 +60,8 @@ body {
 
 .btn:hover { opacity: .85; }
 .btn-print { background: #27ae60; }
+.btn-bw { background: #555; }
+.btn-bw.active { background: #222; }
 
 .hint { font-size: .8rem; color: #888; }
 
@@ -131,6 +133,12 @@ body {
   font-weight: 900;
   letter-spacing: .05em;
   color: #111;
+}
+
+/* B&W mode — override header colours */
+body.print-bw .card-header-cell {
+  background: #111 !important;
+  color: #fff !important;
 }
 
 /* Print styles */

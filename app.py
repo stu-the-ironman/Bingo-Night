@@ -11,7 +11,7 @@ from bingo.session import PlayerRegistry
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
-APP_VERSION = 'v0.1.0-dev3'
+APP_VERSION = 'v0.1.0-dev4'
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'bingo-night-secret'

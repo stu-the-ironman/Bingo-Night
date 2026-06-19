@@ -1,5 +1,30 @@
 # DONE
 
+## dev4 — Display Polish + Sharing
+
+**Shipped:** 2026-06-19
+
+### Display (`/display`)
+
+- QR code widget (`qrcodejs`) fixed bottom-right corner encodes `window.location.origin + "/play"` — renders once on load; players scan to join without typing anything.
+- Caller history row between current-ball widget and board: up to 5 previous calls shown as coloured chips (newest left), each coloured to its column and auto-hidden when no history.
+- Logo `<img class="site-logo">` placeholder in header with CSS rule to hide when `src` is empty.
+- `display.js`: uncalled board cells now show their column colour at 50% opacity (stored in `dataset.colour`); called cells white text on 20%-tinted column background; latest is full column colour.
+
+### Controller (`/`)
+
+- Share play link row added to Players section header: Copy Link (copies `origin + "/play"` to clipboard, shows "Copied!" confirmation) and QR toggle (lazy-builds `play-qr-code` div on first open).
+- Logo placeholder in header matching display.
+- `controller.css`: `.players-header` flex row, `.play-share-btns`, `.btn-share`, `.play-qr` styles; `.header-left` wraps logo + title.
+
+### Cards (`/cards`)
+
+- Colour / B&W toggle button next to Generate and Print. Toggles `body.print-bw` class which overrides all `.card-header-cell` backgrounds to `#111`. Preference stored in `localStorage` and restored on load.
+
+### Player App (`/play`)
+
+- `play.js`: unmarked card cells now show their column colour at 60% opacity in both `renderCard` and `updateMarks`, restoring the correct colour when a mark is cleared (e.g. on new game).
+
 ## dev3 — TTS + Casting
 
 **Shipped:** 2026-05-26

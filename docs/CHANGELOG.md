@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.1.0-dev4 — 2026-06-19
+
+### Added
+
+- Display: QR code widget fixed bottom-right corner encodes `/play` URL — players scan to join without typing a URL.
+- Display: Caller history row shows up to 5 previous calls (newest first) as coloured chips between the current ball and the board.
+- Display: Logo `<img class="site-logo">` placeholder in header — hidden until a file is placed at `static/img/logo.png`.
+- Controller: Share play link row in Players section header — Copy Link button (clipboard) and QR toggle that lazy-renders the `/play` QR code.
+- Controller: Logo placeholder in header to match display.
+- Cards: Colour / B&W toggle button — switches card header row between full-colour and black & white; preference persisted in `localStorage`.
+- Colour-coded numbers across all pages: uncalled board cells show their column colour at 50% opacity; unmarked player card cells show column colour at 60% opacity — column identity is always visible, not just after a ball is called.
+- `app.py`: version bumped to `v0.1.0-dev4`.
+
 ## v0.1.0-dev3 — 2026-05-26
 
 ### Added

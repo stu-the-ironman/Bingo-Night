@@ -316,7 +316,7 @@
 <header class="site-header">
   <div>
     <h1>Bingo Night</h1>
-    <p class="subtitle">v0.1.0-dev3 &mdash; 2026-05-26 &mdash; TTS + Casting shipped</p>
+    <p class="subtitle">v0.1.0-dev4 &mdash; 2026-06-19 &mdash; Display polish + sharing shipped</p>
   </div>
   <div class="header-actions">
     <button class="hdr-btn" onclick="openChangelog()">Changelog</button>
@@ -376,6 +376,25 @@
 // ── Data ────────────────────────────────────────────────────────────────────
 
 const changelogData = [
+  {
+    version: 'v0.1.0-dev4',
+    date: '2026-06-19',
+    sections: [
+      {
+        title: 'Added',
+        items: [
+          'Display: QR code widget bottom-right corner encodes /play URL — scan to join without typing',
+          'Display: caller history row — up to 5 previous calls as coloured chips between current ball and board',
+          'Display: logo <img> placeholder in header (hidden until src set)',
+          'Controller: Share play link row in players section — Copy Link (clipboard) + QR toggle',
+          'Controller: logo placeholder in header',
+          'Cards: Colour/B&W toggle — switches header row to black & white; preference persisted in localStorage',
+          'All pages: column-colour numbers — uncalled/unmarked cells show column colour at ~50% opacity',
+          'app.py: version bumped to v0.1.0-dev4',
+        ],
+      },
+    ],
+  },
   {
     version: 'v0.1.0-dev3',
     date: '2026-05-26',
@@ -569,10 +588,18 @@ const roadmap = [
       {
         id: 'caller-history',
         title: 'Caller History on Display',
-        desc: 'Show the last 5 called numbers below the current ball on the TV display, so players who missed a call can catch up.',
-        status: 'planned',
-        cycle: 'dev3',
-        files: ['templates/display.html', 'static/js/display.js'],
+        desc: 'Row of up to 5 previous calls shown as coloured chips between the current ball and the board. Each chip is coloured to its column. Updates every call.',
+        status: 'shipped',
+        cycle: 'dev4',
+        files: ['templates/display.html', 'static/js/display.js', 'static/css/display.css'],
+      },
+      {
+        id: 'caller-qr-display',
+        title: 'QR Code on Display',
+        desc: 'Scan-to-join QR code fixed in the bottom-right corner of the TV display. Encodes the /play URL automatically from window.location.origin — no configuration needed.',
+        status: 'shipped',
+        cycle: 'dev4',
+        files: ['templates/display.html', 'static/js/display.js', 'static/css/display.css'],
       },
       {
         id: 'caller-tts',
@@ -606,11 +633,11 @@ const roadmap = [
       },
       {
         id: 'cards-print-modes',
-        title: 'Dark / Light Print Modes',
-        desc: 'Toggle between a colour print mode (current) and a low-ink monochrome mode for households that want to save printer ink.',
-        status: 'planned',
-        cycle: 'dev3',
-        files: ['static/css/cards.css', 'templates/cards.html'],
+        title: 'Colour / B&W Print Toggle',
+        desc: 'Toggle button on /cards switches headers between full-colour and black & white. Preference persisted in localStorage. @media print picks up the CSS class so what you see is what prints.',
+        status: 'shipped',
+        cycle: 'dev4',
+        files: ['static/css/cards.css', 'templates/cards.html', 'static/js/cards.js'],
       },
     ],
   },
@@ -667,13 +694,20 @@ const roadmap = [
     module: 'Polish',
     items: [
       {
-        id: 'polish-qr',
-        title: 'QR Code on Display',
-        desc: 'A small QR code in the corner of the TV display links players directly to the /play join page, so no one needs to type a URL.',
-        status: 'planned',
-        cycle: 'dev3',
-        files: ['templates/display.html'],
-        deps: ['player-join'],
+        id: 'polish-logo',
+        title: 'Logo Placeholder',
+        desc: 'Logo <img class="site-logo"> added to controller and display headers. Hidden via CSS when src is empty — drop a file at static/img/logo.png and uncomment one attribute to activate.',
+        status: 'shipped',
+        cycle: 'dev4',
+        files: ['templates/controller.html', 'templates/display.html', 'static/css/controller.css', 'static/css/display.css'],
+      },
+      {
+        id: 'polish-share-play',
+        title: 'Share Play Link',
+        desc: 'Copy Link and QR toggle in the Players section header on the controller. Copy Link writes the /play URL to the clipboard; QR lazily renders a scannable code for the same URL.',
+        status: 'shipped',
+        cycle: 'dev4',
+        files: ['templates/controller.html', 'static/js/controller.js', 'static/css/controller.css'],
       },
       {
         id: 'polish-cast',

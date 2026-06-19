@@ -4,6 +4,20 @@ const HEADERS = ['B', 'I', 'N', 'G', 'O'];
 document.getElementById('btn-generate').addEventListener('click', generateCards);
 document.getElementById('btn-print').addEventListener('click', () => window.print());
 
+// Colour / B&W toggle
+let bwMode = localStorage.getItem('bingo-cards-bw') === 'true';
+const btnBw = document.getElementById('btn-bw');
+
+function applyBwMode() {
+  document.body.classList.toggle('print-bw', bwMode);
+  btnBw.textContent = bwMode ? 'Colour' : 'B&W';
+  btnBw.classList.toggle('active', bwMode);
+  localStorage.setItem('bingo-cards-bw', bwMode);
+}
+
+btnBw.addEventListener('click', () => { bwMode = !bwMode; applyBwMode(); });
+applyBwMode();
+
 // Generate on page load
 generateCards();
 
