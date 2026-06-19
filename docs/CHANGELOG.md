@@ -1,5 +1,23 @@
 # Changelog
 
+## v0.1.0-dev5 — 2026-06-19
+
+### Added
+
+- `bingo/audit.py` — `GameAudit`: thread-safe per-session JSON audit files in `logs/`; records every call, undo, physical registration, and winner with UTC timestamps.
+- `bingo/card_generator.py` — card IDs now 8-char random alphanumeric strings for unique card identity.
+- `/verify` — mobile-optimised card verification page; decodes full grid from QR URL; shows called marks; registration form for unregistered cards; "Claim BINGO!" button appears only when the win check passes and the game is still live.
+- `POST /api/claim-physical` — server-side verification of a physical printed card; broadcasts `bingo_winner` on valid win; returns 409 if game already won.
+- `POST /api/register-card` — links a physical card to a player name; recorded in the audit log.
+- `GET /api/card-registration/<card_id>` — returns registration state for a card.
+- `GET /api/game-state` — lightweight poll endpoint returning `{current, called, remaining, game_won}`.
+- `GET|DELETE /api/sessions`, `GET|DELETE /api/sessions/<id>`, `GET /api/sessions/<id>/csv` — full audit log management API.
+- Cards: QR toggle (persisted in `localStorage`) — each card gets a 60px QR in its footer encoding its unique verify URL.
+- Cards: "Cards per book" input; cards are grouped into numbered books ("BOOK 001", "BOOK 002", …) with a player-name line, matching physical bingo book format; book serial + card position printed on each card footer for quick verbal reference.
+- Cards: card count limit raised from 30 to 200.
+- Display: scan-to-join QR size increased from 120 px to 180 px.
+- `.gitignore` — `logs/` excluded.
+
 ## v0.1.0-dev4 — 2026-06-19
 
 ### Added

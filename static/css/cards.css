@@ -8,7 +8,7 @@ body {
 
 /* On-screen controls */
 .controls {
-  max-width: 500px;
+  max-width: 560px;
   margin: 1.5rem auto;
   padding: 1.25rem 1.5rem;
   background: #fff;
@@ -31,7 +31,7 @@ body {
   gap: .75rem;
 }
 
-.control-row label { font-size: .95rem; }
+.control-row label { font-size: .95rem; min-width: 70px; }
 
 .control-row input {
   width: 70px;
@@ -44,6 +44,7 @@ body {
 .btn-row {
   display: flex;
   gap: .5rem;
+  flex-wrap: wrap;
 }
 
 .btn {
@@ -60,18 +61,53 @@ body {
 
 .btn:hover { opacity: .85; }
 .btn-print { background: #27ae60; }
-.btn-bw { background: #555; }
+.btn-bw    { background: #555; }
 .btn-bw.active { background: #222; }
+.btn-qr    { background: #2980b9; }
+.btn-qr.active { background: #1a5276; }
 
 .hint { font-size: .8rem; color: #888; }
 
-/* Card grid */
+/* Book groups */
 .cards-container {
+  padding: 1rem 1rem 3rem;
+}
+
+.book-group {
+  margin-bottom: 2.5rem;
+}
+
+.book-print-header {
+  display: flex;
+  align-items: baseline;
+  gap: 1.5rem;
+  padding: .6rem 1rem;
+  background: #1a1a2e;
+  color: #fff;
+  border-radius: 8px 8px 0 0;
+  margin-bottom: 8px;
+}
+
+.book-serial {
+  font-size: 1.4rem;
+  font-weight: 900;
+  letter-spacing: .1em;
+  color: #f9ca24;
+  white-space: nowrap;
+}
+
+.book-player-line {
+  font-size: .85rem;
+  color: rgba(255,255,255,.6);
+  font-style: italic;
+}
+
+/* Cards within a book */
+.book-cards {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 1.2rem;
-  padding: 1rem 1rem 3rem;
 }
 
 .bingo-card {
@@ -80,15 +116,19 @@ body {
   box-shadow: 0 2px 8px rgba(0,0,0,.12);
   padding: 12px;
   width: 260px;
+  display: inline-block;
+  margin: 6px;
   page-break-inside: avoid;
   break-inside: avoid;
+  vertical-align: top;
 }
 
 .card-id {
   text-align: center;
-  font-size: .7rem;
+  font-size: .65rem;
   color: #aaa;
   margin-bottom: 4px;
+  letter-spacing: .03em;
 }
 
 .card-header {
@@ -135,7 +175,32 @@ body {
   color: #111;
 }
 
-/* B&W mode — override header colours */
+/* Card footer: QR + UID */
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.card-qr img,
+.card-qr canvas {
+  width: 60px !important;
+  height: 60px !important;
+  display: block;
+}
+
+.card-uid {
+  font-size: .6rem;
+  color: #bbb;
+  font-family: monospace;
+  letter-spacing: .05em;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+/* B&W mode */
 body.print-bw .card-header-cell {
   background: #111 !important;
   color: #fff !important;
@@ -147,14 +212,39 @@ body.print-bw .card-header-cell {
 
   body { background: #fff; }
 
-  .cards-container {
-    padding: 0;
-    gap: .6rem;
+  .cards-container { padding: 0; }
+
+  .book-group {
+    page-break-before: always;
+    break-before: page;
+    margin-bottom: 0;
+  }
+
+  .book-group:first-child {
+    page-break-before: avoid;
+    break-before: avoid;
+  }
+
+  .book-print-header {
+    border-radius: 0;
+    margin-bottom: 6px;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
   .bingo-card {
     box-shadow: none;
     border: 1px solid #ccc;
     width: 48%;
+  }
+
+  .card-header-cell {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .card-cell.free {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 }

@@ -10,19 +10,25 @@
   <div id="controls" class="controls no-print">
     <h1>Bingo Card Generator</h1>
     <div class="control-row">
-      <label for="card-count">Number of cards:</label>
-      <input type="number" id="card-count" value="6" min="1" max="30">
+      <label for="card-count">Cards:</label>
+      <input type="number" id="card-count" value="6" min="1" max="200">
+    </div>
+    <div class="control-row">
+      <label for="cards-per-book">Per book:</label>
+      <input type="number" id="cards-per-book" value="4" min="1" max="20">
     </div>
     <div class="btn-row">
       <button id="btn-generate" class="btn">Generate</button>
-      <button id="btn-bw" class="btn btn-bw">B&amp;W</button>
+      <button id="btn-bw"  class="btn btn-bw">B&amp;W</button>
+      <button id="btn-qr"  class="btn btn-qr">Show QR</button>
       <button id="btn-print" class="btn btn-print">Print</button>
     </div>
-    <p class="hint">Cards print 2 per row. Use your browser's print dialog.</p>
+    <p class="hint">Cards print 2 per row. Each book starts on a new page.</p>
   </div>
 
   <div id="cards-container" class="cards-container"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <script src="/static/js/cards.js"></script>
 </body>
 </html>

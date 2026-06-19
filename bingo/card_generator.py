@@ -1,4 +1,5 @@
 import random
+import string
 
 COLUMNS = {
     'B': list(range(1, 16)),
@@ -9,16 +10,17 @@ COLUMNS = {
 }
 
 
+def _card_id() -> str:
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+
+
 def generate_card() -> list[list]:
-    """Return a 5x5 grid (list of 5 rows, each row is 5 cells).
-    Each cell is either an int or None (FREE space at center).
-    """
+    """Return a 5×5 grid. Each cell is an int or None (FREE at centre)."""
     columns = []
     for letter in ('B', 'I', 'N', 'G', 'O'):
         col = random.sample(COLUMNS[letter], 5)
         columns.append(col)
 
-    # Transpose columns → rows, place FREE in center (row 2, col 2)
     grid = []
     for row_idx in range(5):
         row = [columns[col_idx][row_idx] for col_idx in range(5)]
@@ -29,8 +31,4 @@ def generate_card() -> list[list]:
 
 
 def generate_cards(count: int) -> list[dict]:
-    cards = []
-    for i in range(count):
-        grid = generate_card()
-        cards.append({'id': i + 1, 'grid': grid})
-    return cards
+    return [{'id': _card_id(), 'grid': generate_card()} for _ in range(count)]

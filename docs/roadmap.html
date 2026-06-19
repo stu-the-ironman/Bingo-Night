@@ -316,7 +316,7 @@
 <header class="site-header">
   <div>
     <h1>Bingo Night</h1>
-    <p class="subtitle">v0.1.0-dev4 &mdash; 2026-06-19 &mdash; Display polish + sharing shipped</p>
+    <p class="subtitle">v0.1.0-dev5 &mdash; 2026-06-19 &mdash; Audit log + QR verification shipped</p>
   </div>
   <div class="header-actions">
     <button class="hdr-btn" onclick="openChangelog()">Changelog</button>
@@ -376,6 +376,31 @@
 // ── Data ────────────────────────────────────────────────────────────────────
 
 const changelogData = [
+  {
+    version: 'v0.1.0-dev5',
+    date: '2026-06-19',
+    sections: [
+      {
+        title: 'Added',
+        items: [
+          'bingo/audit.py — GameAudit: thread-safe per-session JSON log files in logs/; records calls, undos, registrations, winner',
+          'bingo/card_generator.py — card IDs now 8-char random alphanumeric strings',
+          '/verify — mobile card verification page; decodes grid from QR URL; shows live marks; Claim BINGO! only appears on confirmed win',
+          'POST /api/claim-physical — server verifies physical card; broadcasts bingo_winner; 409 if already won',
+          'POST /api/register-card — links card ID to player name; records to audit log',
+          'GET /api/card-registration/<card_id> — returns registration state',
+          'GET /api/game-state — lightweight poll endpoint returning current called state + game_won',
+          'GET|DELETE /api/sessions, GET|DELETE /api/sessions/<id>, GET /api/sessions/<id>/csv — audit API',
+          'Cards: QR toggle (persisted in localStorage) — 60px QR in card footer encodes full verify URL',
+          'Cards: book grouping + serial codes ("BOOK 001") with player name line; book/card position on each card',
+          'Cards: cards-per-book input (1–20); card count limit raised to 200',
+          'Display: scan-to-join QR size increased from 120px to 180px',
+          '.gitignore — logs/ excluded',
+          'app.py: version bumped to v0.1.0-dev5',
+        ],
+      },
+    ],
+  },
   {
     version: 'v0.1.0-dev4',
     date: '2026-06-19',
@@ -626,7 +651,7 @@ const roadmap = [
       {
         id: 'cards-generator',
         title: 'Printable Card Generator',
-        desc: 'Configurable 1–30 cards per run. Standard 5×5 BINGO layout with correct column ranges, FREE centre space, colour-coded headers. 2-per-page print layout via CSS @media print.',
+        desc: 'Configurable 1–200 cards per run. Standard 5×5 BINGO layout with correct column ranges, FREE centre space, colour-coded headers. Cards group into numbered books. 2-per-page print layout via CSS @media print.',
         status: 'shipped',
         cycle: 'dev1',
         files: ['bingo/card_generator.py', 'templates/cards.html', 'static/css/cards.css', 'static/js/cards.js'],
@@ -724,6 +749,62 @@ const roadmap = [
         status: 'future',
         cycle: null,
         files: ['bingo/game.py', 'app.py'],
+      },
+    ],
+  },
+  {
+    module: 'Audit & Verification',
+    items: [
+      {
+        id: 'audit-log',
+        title: 'Game Session Audit Log',
+        desc: 'Every game session logged to logs/{YYYY-MM-DD}_{NNN}.json. Records every ball called, undos, physical card registrations, and the winner with UTC timestamps. Thread-safe GameAudit class.',
+        status: 'shipped',
+        cycle: 'dev5',
+        files: ['bingo/audit.py', 'app.py'],
+      },
+      {
+        id: 'audit-api',
+        title: 'Audit REST API',
+        desc: 'GET /api/sessions lists all sessions. GET|DELETE /api/sessions/<id> retrieve or delete a session. GET /api/sessions/<id>/csv exports as CSV download. DELETE /api/sessions clears all.',
+        status: 'shipped',
+        cycle: 'dev5',
+        files: ['app.py'],
+        deps: ['audit-log'],
+      },
+      {
+        id: 'cards-qr',
+        title: 'QR Codes on Printed Cards',
+        desc: 'Toggle on /cards adds a 60px QR code to each card footer. Encodes the full 5×5 grid into the /verify URL — no server lookup needed. State persisted in localStorage.',
+        status: 'shipped',
+        cycle: 'dev5',
+        files: ['templates/cards.html', 'static/js/cards.js', 'static/css/cards.css'],
+      },
+      {
+        id: 'cards-books',
+        title: 'Book Grouping + Serial Codes',
+        desc: 'Cards group into numbered books ("BOOK 001", "BOOK 002", …) with a player-name line for writing in. Each card shows its book serial and position (BOOK 001 — CARD 2 OF 4) for quick verbal cross-reference. Cards-per-book is configurable (1–20).',
+        status: 'shipped',
+        cycle: 'dev5',
+        files: ['static/js/cards.js', 'static/css/cards.css', 'templates/cards.html'],
+      },
+      {
+        id: 'verify-page',
+        title: 'Card Verify Page',
+        desc: 'Mobile-optimised /verify page. Decodes grid from QR URL query params — no server storage required. Shows card with live call marks highlighted in column colour. Winning line outlined in gold. Registration form for unregistered cards.',
+        status: 'shipped',
+        cycle: 'dev5',
+        files: ['templates/verify.html', 'static/js/verify.js', 'static/css/verify.css'],
+        deps: ['cards-qr', 'audit-log'],
+      },
+      {
+        id: 'physical-claim',
+        title: 'Physical Card Claim',
+        desc: '"Claim BINGO!" button appears only when the client-side win check passes and the game has not already been won. POST /api/claim-physical server-verifies and broadcasts bingo_winner to all connected clients. Returns 409 if game already won.',
+        status: 'shipped',
+        cycle: 'dev5',
+        files: ['app.py', 'static/js/verify.js'],
+        deps: ['verify-page'],
       },
     ],
   },

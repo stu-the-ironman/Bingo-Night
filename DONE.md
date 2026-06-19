@@ -1,5 +1,55 @@
 # DONE
 
+## dev5 — Audit Log + QR Verification
+
+**Shipped:** 2026-06-19
+
+### Backend
+
+- `bingo/audit.py` — `GameAudit` class: thread-safe per-session JSON log files stored in `logs/{YYYY-MM-DD}_{NNN}.json`. Records `calls`, `undos`, `registrations`, and `winner` per game session. Auto-creates a session on first `record_call()`. Methods: `new_session`, `close_session`, `record_call`, `record_undo`, `record_registration`, `record_winner`, `list_sessions`, `get_session`, `to_csv`, `delete_session`, `clear_all`.
+- `bingo/card_generator.py` — card IDs upgraded from sequential integers to random 8-character alphanumeric strings (`random.choices(ascii_uppercase + digits, k=8)`) for unique card identification.
+- `app.py` — `GameAudit` and `physical_cards` globals added. `_decode_grid()` helper decodes column-major comma-separated grid strings. `on_call_next` records each ball; `on_undo` records the undone ball; `on_reset` closes the session and clears physical card registrations; `on_claim_bingo` records the digital winner. Card count limit raised from 30 to 200. Version bumped to `v0.1.0-dev5`.
+
+### New Routes
+
+- `GET /verify` — renders the card verify page.
+- `GET /api/game-state` — returns `{current, called, remaining, game_won}` for verify page polling.
+- `GET /api/card-registration/<card_id>` — returns `{registered, name}` for a physical card.
+- `POST /api/register-card` — links a physical card ID to a player name; records to audit log.
+- `POST /api/claim-physical` — server-verifies a physical card grid against called balls; broadcasts `bingo_winner` and records winner if valid; returns 409 if game already won.
+- `GET /api/sessions` — lists all audit sessions.
+- `DELETE /api/sessions` — clears all audit session files.
+- `GET /api/sessions/<id>` — returns full session JSON.
+- `DELETE /api/sessions/<id>` — deletes a session file.
+- `GET /api/sessions/<id>/csv` — returns session data as CSV download.
+
+### Verify Page (`/verify`)
+
+- `templates/verify.html` + `static/js/verify.js` + `static/css/verify.css` — mobile-optimised dark-theme page.
+- Parses `id` and `c` query params from the card QR URL.
+- `decodeGrid(c)` reconstructs the 5×5 grid from the column-major encoding (FREE=0).
+- Fetches `/api/game-state` and `/api/card-registration/{id}` in parallel on load.
+- Renders the card with called numbers highlighted in column colour; winning line cells outlined in gold.
+- Unregistered cards show a name registration form; `POST /api/register-card` on submit.
+- "Claim BINGO!" button renders **only** when the client-side win check passes and `game_won` is false — scanning at game start shows the card with no marks and no claim button.
+- Physical claim goes to `POST /api/claim-physical`; on success the button turns gold and the server broadcasts `bingo_winner` to all connected clients.
+
+### Cards (`/cards`)
+
+- QR toggle button added (persisted in `localStorage`). When enabled, a 60px QR code appears in each card footer, encoding `{origin}/verify?id={card.id}&c={encoded_grid}`.
+- "Cards per book" input (1–20, default 4). Cards are grouped into books with a printed serial header ("BOOK 001", "BOOK 002", …) + player name line — matches physical bingo book format seen on TV bingo.
+- Each card footer shows book serial and card position (e.g., "BOOK 001 — CARD 2 OF 4"), giving a quick verbal reference when someone calls bingo without scanning.
+- Card count input limit raised to 200.
+- Print layout: each book starts on a new page (`page-break-before: page`); first book avoids leading break.
+
+### Display (`/display`)
+
+- Scan-to-join QR code size increased from 120px to 180px (QRCode constructor + CSS `clamp(120px, 14vw, 180px)`).
+
+### Infrastructure
+
+- `.gitignore` — `logs/` excluded so audit files don't enter version control.
+
 ## dev4 — Display Polish + Sharing
 
 **Shipped:** 2026-06-19

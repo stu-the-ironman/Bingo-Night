@@ -218,3 +218,9 @@ header {
   letter-spacing: .04em;
   text-transform: uppercase;
 }
+
+#qr-join-code img,
+#qr-join-code canvas {
+  width: clamp(120px, 14vw, 180px) !important;
+  height: auto !important;
+}

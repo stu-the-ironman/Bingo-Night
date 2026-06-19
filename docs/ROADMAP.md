@@ -2,7 +2,7 @@
 
 ## Current State
 
-**v0.1.0-dev4** — TTS + Casting shipped. Piper TTS provides offline server-side voice announcements for all 75 balls and game events. Controller has a live TTS toggle. TV display plays audio. Cast to TV uses the W3C Presentation API (Chromecast/AirPlay) with a QR code fallback.
+**v0.1.0-dev5** — Audit log + QR verification shipped. Every game session is logged to `logs/` as a JSON file. Printed cards optionally carry a QR code that encodes the full card grid — scanning opens `/verify` which shows live call marks and a "Claim BINGO!" button that only appears on a confirmed win. Cards now group into numbered books with printed serial codes. Full REST audit API added.
 
 ## Timeline
 
@@ -17,11 +17,22 @@ gantt
     section Phase 3
     TTS + Casting                     :done,    dev3, 2026-05-26, 1d
     Display polish + sharing          :done,    dev4, 2026-06-19, 1d
+    Audit log + QR verification       :done,    dev5, 2026-06-19, 1d
     section Future
-    Themes + further polish           :planned, dev5, after dev4, 14d
+    Themes + further polish           :planned, dev6, after dev5, 14d
 ```
 
-## Now (dev4 — shipped)
+## Now (dev5 — shipped)
+
+- Game session audit log — every game session stored as `logs/{YYYY-MM-DD}_{NNN}.json` with all calls, undos, registrations, and winner timestamped in UTC
+- QR codes on printed cards (toggle on `/cards`) — encodes full card grid into `/verify` URL for winner verification
+- `/verify` page — mobile-optimised; shows card with live call marks; "Claim BINGO!" only appears on confirmed win; registration form links card to player name
+- Book grouping + serial codes — cards group into numbered books ("BOOK 001") with a player name line; each card shows its book and position for quick verbal cross-reference
+- Cards-per-book input + 200-card limit
+- Audit REST API — list, get, delete sessions; CSV export
+- Display QR size bumped to 180 px
+
+## Recent (dev4 — shipped)
 
 - QR code on TV display — scan to join `/play`, no URL typing needed
 - Caller history row — last 5 previous balls shown as coloured chips on display
@@ -54,7 +65,6 @@ gantt
 
 ## Next (Future)
 
-- QR code on TV display to scan and join as player
 - Themed ball sets (holiday skins)
-- Dark/light print modes for cards
-- Caller history on display (last 5 calls)
+- Admin UI for browsing and exporting audit logs
+- Card PDF export (server-side, WeasyPrint)

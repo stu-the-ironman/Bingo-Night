@@ -4,8 +4,10 @@ These rules apply to any automation or agent working in this repo.
 
 ## Current Project State
 
-- Current cycle: `v0.1.0-dev4` — **Display polish + sharing shipped.** QR code on TV display for scan-to-join. Caller history (last 5 calls). Share play link on controller (Copy Link + QR). Colour/B&W print toggle. Logo placeholder. Column-colour numbers on all pages. Piper TTS pre-generates offline voice clips for all 75 balls and special events. Display page plays audio on each call. Controller has a 🔊/🔇 toggle. Cast to TV uses the W3C Presentation API (Chromecast/AirPlay) with a QR code fallback.
+- Current cycle: `v0.1.0-dev5` — **Audit log + QR card verification shipped.** `bingo/audit.py` records every game session as a JSON file in `logs/`. Physical printed cards carry a QR code (toggleable on `/cards`) encoding `{origin}/verify?id={card_id}&c={encoded_grid}`. Scanning opens `/verify` which shows the card with live call marks and a "Claim BINGO!" button that only appears on a valid win. Cards group into books with printed serial codes ("BOOK 001"). REST audit API at `/api/sessions`. Display QR size bumped to 180 px.
 - Public/stable baseline: none yet (pre-release).
+- `dev5` shipped: `bingo/audit.py` GameAudit class. `bingo/card_generator.py` random 8-char card IDs. `app.py`: audit + physical_cards globals, `_decode_grid`, `/verify` route, 9 new REST endpoints, audit wired into call/undo/reset/claim handlers, card limit 200, version `v0.1.0-dev5`. `templates/verify.html` + `static/js/verify.js` + `static/css/verify.css` verify page. Cards: QR toggle, book grouping with serial codes, cards-per-book input, limit 200. Display: QR size 180px. `.gitignore`: `logs/`.
+- `dev4` shipped: QR on display, caller history, share link on controller, B&W toggle, logo placeholder, column-colour numbers.
 - `dev3` shipped: `bingo/tts.py` BingoTTS class (Piper TTS wrapper). `scripts/download_voice.py` model downloader. `app.py`: `_init_tts()` startup; `tts_toggle` SocketIO handler; `tts_state` broadcast; version `v0.1.0-dev3`. Display: `<audio>` element, TTS indicator, plays ball/bingo/all_called WAVs. Controller: TTS toggle button, Cast to TV with PresentationRequest API + QR fallback. `.gitignore`: `models/` and `static/audio/` excluded.
 - `dev2` shipped: `bingo/session.py` PlayerRegistry (join, rejoin, disconnect, claim, reset_cards, thread-safe). `/play` route + `play.html`/`play.css`/`play.js` player app (loading→join→card screens, localStorage rejoin, auto-mark with pop animation, BINGO claim button, toast feedback, winner overlay). Controller: player roster (live pills with connected/claimed state), winner banner with dismiss. Display: winner overlay (auto-dismisses 15s). `app.py`: `join`, `rejoin`, `disconnect`, `claim_bingo` SocketIO events; `game_won` flag prevents duplicate broadcasts; reset pushes new cards to all players.
 - `dev1` shipped: Initial project scaffold. Flask + Flask-SocketIO backend. `/display` full-screen TV caller (75-ball board, colour-coded columns, live current-ball highlight). `/` mobile controller (Call Next, Undo, New Game with confirmation, progress bar, per-column called list). `/cards` printable card generator (configurable count 1–30, 5×5 FREE-centre cards, 2-per-page print layout, colour-coded BINGO headers). `bingo/game.py` game state (draw without replacement, undo, reset). `bingo/card_generator.py` standard B-I-N-G-O column ranges.
@@ -35,14 +37,24 @@ These rules apply to any automation or agent working in this repo.
 | Player list on controller — live roster with claimed state | `templates/controller.html`, `static/js/controller.js` | **SHIPPED** |
 | Winner banner on controller + overlay on display | `controller.html`, `display.html`, `display.js` | **SHIPPED** |
 
+### Phase 5 — Audit + QR Verification (SHIPPED dev5)
+
+| Task | File(s) | Status |
+|------|---------|--------|
+| Game session audit log | `bingo/audit.py`, `app.py` | **SHIPPED** |
+| QR codes on printed cards (toggleable) | `templates/cards.html`, `static/js/cards.js` | **SHIPPED** |
+| Book grouping + serial codes on cards | `static/js/cards.js`, `static/css/cards.css` | **SHIPPED** |
+| `/verify` card verification page | `templates/verify.html`, `static/js/verify.js`, `static/css/verify.css` | **SHIPPED** |
+| Physical card claim → server verification | `app.py` | **SHIPPED** |
+| Audit REST API | `app.py` | **SHIPPED** |
+
 ### Remaining Polish Items (Future)
 
 | Task | File(s) | Status |
 |------|---------|--------|
-| QR code on display — scan to join as player | `templates/display.html` | Planned |
 | Themed ball sets — holiday skins | `bingo/game.py`, `app.py` | Planned |
-| Dark/light print option for cards | `static/css/cards.css` | Planned |
-| Caller history scroll on display (last 5 calls) | `display.html`, `display.js` | Planned |
+| Admin UI for audit log browsing | `templates/`, `app.py` | Planned |
+| Card PDF export (server-side WeasyPrint) | `app.py` | Planned |
 
 ## Commit Discipline
 

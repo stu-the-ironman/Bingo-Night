@@ -37,9 +37,19 @@
 - [x] Logo placeholder in controller and display headers
 - [x] Column-colour numbers on all pages — uncalled/unmarked cells show column colour at reduced opacity
 
+## dev5 — Audit Log + QR Verification (DONE)
+
+- [x] `bingo/audit.py` — `GameAudit`: thread-safe per-session JSON log files in `logs/`; records calls, undos, registrations, winner; list/get/csv/delete/clear query API
+- [x] `bingo/card_generator.py` — card IDs changed to random 8-char alphanumeric strings
+- [x] `app.py` — `GameAudit` integrated; `physical_cards` dict; `_decode_grid` helper; `/verify` route; 9 new REST endpoints; `on_call_next/undo/reset/claim_bingo` wired to audit; card count limit raised to 200; version `v0.1.0-dev5`
+- [x] `/verify` — mobile-optimised card verify page; decodes grid from QR URL; shows card with called marks; registration form for unregistered cards; Claim BINGO! button appears only on valid win
+- [x] Cards: QR toggle button + localStorage persistence; `encodeGrid()` builds verify URL; per-card QR (60px) in card footer when enabled; book grouping with printed serial "BOOK 001"; cards-per-book input; card count limit raised to 200
+- [x] Display: QR join code size bumped 120→180 px; CSS clamp for responsive sizing
+- [x] `.gitignore` — added `logs/`
+
 ## Backlog / Future
 
 - [ ] Multiple simultaneous games (room codes)
 - [ ] Host password protection
 - [ ] Card PDF export (server-side, e.g. with WeasyPrint)
-- [ ] Caller voice announcement (browser SpeechSynthesis API)
+- [ ] Admin UI for viewing/exporting session audit logs

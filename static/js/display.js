@@ -114,8 +114,8 @@ function updateHistory(called, current) {
 // QR code — /play URL, rendered once on load
 new QRCode(document.getElementById('qr-join-code'), {
   text: `${location.origin}/play`,
-  width: 120,
-  height: 120,
+  width: 180,
+  height: 180,
   colorDark: '#000000',
   colorLight: '#ffffff',
 });
