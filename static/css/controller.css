@@ -1,17 +1,17 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #0f0f1a;
-  --surface: #1a1a2e;
-  --accent: #f9ca24;
-  --text: #f0f0f0;
-  --muted: #888;
-  --danger: #e74c3c;
-  --safe: #27ae60;
+  --bg: #0a0a14;
+  --surface: #24244c;
+  --accent: #ffe100;
+  --text: #f0efff;
+  --muted: #8888bb;
+  --danger: #ff2d78;
+  --safe: #00e676;
 }
 
 html, body {
-  background: var(--bg);
+  background: linear-gradient(160deg, #110820 0%, #0a0a14 55%, #071018 100%);
   color: var(--text);
   font-family: 'Segoe UI', Arial, sans-serif;
   min-height: 100dvh;
@@ -31,7 +31,7 @@ header {
   justify-content: space-between;
   align-items: center;
   padding-bottom: .5rem;
-  border-bottom: 1px solid #2a2a3e;
+  border-bottom: 1px solid #252545;
 }
 
 header h1 {
@@ -39,6 +39,7 @@ header h1 {
   font-weight: 900;
   color: var(--accent);
   letter-spacing: .1em;
+  text-shadow: 0 0 20px rgba(255,225,0,.4);
 }
 
 .header-left {
@@ -64,7 +65,7 @@ header h1 {
   font-size: .8rem;
   color: var(--muted);
   text-decoration: none;
-  border: 1px solid #333;
+  border: 1px solid #252545;
   padding: .25rem .6rem;
   border-radius: 4px;
 }
@@ -73,7 +74,7 @@ header h1 {
 
 .btn-icon {
   background: var(--surface);
-  border: 1px solid #333;
+  border: 1px solid #252545;
   border-radius: 6px;
   padding: .25rem .5rem;
   font-size: 1rem;
@@ -103,7 +104,7 @@ header h1 {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #2a2a2a;
+  background: #1c1c30;
   transition: background .3s, transform .2s;
   line-height: 1;
 }
@@ -123,7 +124,7 @@ header h1 {
 /* Progress */
 .progress-bar-wrap {
   height: 8px;
-  background: #222;
+  background: #1c1c30;
   border-radius: 4px;
   overflow: hidden;
 }
@@ -133,6 +134,7 @@ header h1 {
   background: var(--accent);
   border-radius: 4px;
   transition: width .4s;
+  box-shadow: 0 0 8px rgba(255,225,0,.5);
 }
 
 .progress-label {
@@ -170,10 +172,11 @@ header h1 {
   padding: 1.1rem;
   background: var(--accent);
   color: #111;
+  box-shadow: 0 0 20px rgba(255,225,0,.3);
 }
 
-.btn-undo { background: #2a2a3e; color: var(--text); }
-.btn-reset { background: #2a2a3e; color: var(--danger); }
+.btn-undo { background: #1c1c38; color: var(--text); }
+.btn-reset { background: #1c1c38; color: var(--danger); }
 
 /* Called section */
 .called-section h2 {
@@ -226,7 +229,7 @@ header h1 {
   color: var(--muted);
   font-size: .85rem;
   text-decoration: none;
-  border-bottom: 1px dashed #444;
+  border-bottom: 1px dashed #333;
 }
 
 .card-gen-link a:hover { color: var(--accent); }
@@ -234,7 +237,7 @@ header h1 {
 /* Modal */
 .modal {
   position: fixed; inset: 0;
-  background: rgba(0,0,0,.7);
+  background: rgba(0,0,0,.75);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -252,6 +255,7 @@ header h1 {
   display: flex;
   flex-direction: column;
   gap: .75rem;
+  border: 1px solid #252545;
 }
 
 .modal-box p { font-size: 1rem; line-height: 1.4; }
@@ -271,7 +275,7 @@ header h1 {
 
 .btn-share {
   background: var(--surface);
-  border: 1px solid #333;
+  border: 1px solid #252545;
   border-radius: 6px;
   color: var(--muted);
   font-size: .72rem;
@@ -352,7 +356,7 @@ header h1 {
   flex-shrink: 0;
 }
 
-.player-pill.disconnected .status-dot { background: #555; }
+.player-pill.disconnected .status-dot { background: #444; }
 .player-pill.claimed .status-dot { background: var(--accent); }
 
 /* Cast section */
@@ -363,9 +367,9 @@ header h1 {
 }
 
 .btn-cast {
-  background: #1a1a3e;
+  background: #131330;
   color: var(--text);
-  border: 1px solid #3a3a6e;
+  border: 1px solid #2a2a5a;
   border-radius: 10px;
   padding: .7rem;
   font-size: .95rem;
@@ -398,8 +402,8 @@ header h1 {
 #qr-canvas img { border-radius: 6px; }
 
 .btn-copy-url {
-  background: #2a2a3e;
-  border: 1px solid #444;
+  background: #1c1c38;
+  border: 1px solid #252545;
   border-radius: 6px;
   color: var(--text);
   font-size: .8rem;
@@ -414,15 +418,15 @@ header h1 {
 .winner-banner {
   position: fixed;
   top: 0; left: 0; right: 0;
-  background: linear-gradient(135deg, #27ae60, #1e8449);
-  color: #fff;
+  background: linear-gradient(135deg, #00e676, #00b854);
+  color: #000;
   padding: .85rem 1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: .75rem;
   z-index: 200;
-  box-shadow: 0 4px 20px rgba(0,0,0,.4);
+  box-shadow: 0 4px 30px rgba(0,230,118,.4);
   animation: slideDown .3s ease-out;
 }
 
@@ -436,10 +440,10 @@ header h1 {
 .winner-banner-text { font-size: 1rem; font-weight: 700; }
 
 .winner-banner-dismiss {
-  background: rgba(255,255,255,.25);
+  background: rgba(0,0,0,.2);
   border: none;
   border-radius: 6px;
-  color: #fff;
+  color: #000;
   padding: .3rem .7rem;
   font-size: .8rem;
   cursor: pointer;

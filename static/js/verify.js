@@ -1,4 +1,4 @@
-const COLORS  = { B: '#e74c3c', I: '#e67e22', N: '#27ae60', G: '#2980b9', O: '#8e44ad' };
+const COLORS  = { B: '#ff2d78', I: '#ff9500', N: '#00e676', G: '#00d4ff', O: '#b44dff' };
 const LETTERS = ['B', 'I', 'N', 'G', 'O'];
 
 const params      = new URLSearchParams(location.search);
@@ -168,7 +168,7 @@ document.getElementById('btn-claim').addEventListener('click', async () => {
 
   if (res.ok && data.valid) {
     btn.textContent      = 'BINGO CONFIRMED! 🏆';
-    btn.style.background = 'linear-gradient(135deg, #f9ca24, #e67e22)';
+    btn.style.background = 'linear-gradient(135deg, #ffe100, #ff9500)';
     btn.style.color      = '#111';
     const statusEl = document.getElementById('bingo-status');
     statusEl.textContent = 'BINGO WINNER!';
