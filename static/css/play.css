@@ -49,11 +49,8 @@ html, body {
 }
 
 .join-logo {
-  font-size: 2rem;
-  font-weight: 900;
-  color: var(--accent);
-  letter-spacing: .15em;
-  text-shadow: 0 0 20px rgba(255,225,0,.4);
+  height: clamp(48px, 18vw, 96px);
+  width: auto;
 }
 
 .join-sub { color: var(--muted); font-size: .9rem; text-align: center; }
