@@ -319,4 +319,4 @@ def on_claim_bingo(data):
 
 if __name__ == '__main__':
     _init_tts()
-    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+    socketio.run(app, host='0.0.0.0', port=5000, debug=True, allow_unsafe_werkzeug=True)
