@@ -32,7 +32,7 @@ tts_enabled   = False
 
 def _init_tts() -> None:
     global _tts, tts_available
-    model_path = os.environ.get('PIPER_MODEL', 'models/en_US-lessac-medium.onnx')
+    model_path = os.environ.get('PIPER_MODEL', 'models/en_US-hfc_female-medium.onnx')
     if not Path(model_path).exists():
         log.warning("Piper model not found at %s — TTS disabled. "
                     "Run: python scripts/download_voice.py", model_path)

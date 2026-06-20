@@ -3,15 +3,15 @@
 
 Usage:
     python scripts/download_voice.py
-    python scripts/download_voice.py en/en_US/lessac/medium en_US-lessac-medium
+    python scripts/download_voice.py en/en_US/hfc_female/medium en_US-hfc_female-medium
 """
 import sys
 import urllib.request
 from pathlib import Path
 
 MODEL_BASE   = "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0"
-DEFAULT_PATH = "en/en_US/lessac/medium"
-DEFAULT_STEM = "en_US-lessac-medium"
+DEFAULT_PATH = "en/en_US/hfc_female/medium"
+DEFAULT_STEM = "en_US-hfc_female-medium"
 
 
 def download(voice_path: str = DEFAULT_PATH, stem: str = DEFAULT_STEM) -> None:
