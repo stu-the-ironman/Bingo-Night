@@ -1,4 +1,4 @@
-const COLORS  = { B: '#e74c3c', I: '#e67e22', N: '#27ae60', G: '#2980b9', O: '#8e44ad' };
+const COLORS  = { B: '#ff2d78', I: '#ff9500', N: '#00e676', G: '#00d4ff', O: '#b44dff' };
 const HEADERS = ['B', 'I', 'N', 'G', 'O'];
 
 document.getElementById('btn-generate').addEventListener('click', generateCards);

@@ -1,4 +1,4 @@
-const COLORS = { B: '#e74c3c', I: '#e67e22', N: '#27ae60', G: '#2980b9', O: '#8e44ad' };
+const COLORS = { B: '#ff2d78', I: '#ff9500', N: '#00e676', G: '#00d4ff', O: '#b44dff' };
 const RANGES = { B: [1,15], I: [16,30], N: [31,45], G: [46,60], O: [61,75] };
 
 // Build number cells — each cell stores its column colour for instant resets

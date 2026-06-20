@@ -1,4 +1,4 @@
-const COLORS  = { B: '#e74c3c', I: '#e67e22', N: '#27ae60', G: '#2980b9', O: '#8e44ad' };
+const COLORS  = { B: '#ff2d78', I: '#ff9500', N: '#00e676', G: '#00d4ff', O: '#b44dff' };
 const LETTERS = 'BINGO';
 
 const socket = io();
@@ -140,7 +140,7 @@ function renderCard() {
       cell.dataset.c = c;
       if (val === null) {
         cell.textContent = 'FREE';
-        cell.style.background = '#f9ca24';
+        cell.style.background = '#ffe100';
         cell.style.color = '#111';
       } else {
         cell.textContent = val;
@@ -187,7 +187,7 @@ function highlightWinLine(line) {
   if (!line) return;
   for (const [r, c] of line) {
     const cell = document.querySelector(`.grid-cell[data-r="${r}"][data-c="${c}"]`);
-    if (cell) cell.style.outline = '3px solid #f9ca24';
+    if (cell) cell.style.outline = '3px solid #ffe100';
   }
 }
 
