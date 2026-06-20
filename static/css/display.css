@@ -128,6 +128,39 @@ header {
   transition: opacity .3s;
 }
 
+/* Pattern banner */
+.pattern-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1vw;
+  padding: .4vh 0;
+  flex-shrink: 0;
+}
+
+.mini-pattern { display: flex; flex-direction: column; gap: 2px; }
+
+.mp-row { display: flex; gap: 2px; }
+
+.mp-cell {
+  width: clamp(10px, 1.4vw, 18px);
+  height: clamp(10px, 1.4vw, 18px);
+  border-radius: 2px;
+  background: rgba(255,255,255,.08);
+}
+
+.mp-cell.mp-on  { background: #ffe100; opacity: .85; }
+.mp-cell.mp-free { background: #ffe100; border-radius: 50%; }
+
+.pattern-name {
+  font-size: clamp(.8rem, 1.6vw, 1.3rem);
+  font-weight: 700;
+  color: #ffe100;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  text-shadow: 0 0 16px rgba(255,225,0,.4);
+}
+
 /* Board */
 .board-section {
   flex: 1;

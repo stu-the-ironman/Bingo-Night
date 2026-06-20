@@ -29,27 +29,33 @@
       <div id="call-history" class="call-history"></div>
     </section>
 
+    <!-- Pattern indicator -->
+    <div id="pattern-banner" class="pattern-banner">
+      <div id="pattern-mini-grid" class="mini-pattern"></div>
+      <div id="pattern-name" class="pattern-name">Any Line</div>
+    </div>
+
     <!-- Called numbers board — one column per letter -->
     <section class="board-section">
       <div class="board">
         <div class="board-col" id="col-B">
-          <div class="col-header" style="background:#e74c3c">B</div>
+          <div class="col-header" style="background:#ff2d78">B</div>
           <div class="col-cells" id="cells-B"></div>
         </div>
         <div class="board-col" id="col-I">
-          <div class="col-header" style="background:#e67e22">I</div>
+          <div class="col-header" style="background:#ff9500">I</div>
           <div class="col-cells" id="cells-I"></div>
         </div>
         <div class="board-col" id="col-N">
-          <div class="col-header" style="background:#27ae60">N</div>
+          <div class="col-header" style="background:#00e676">N</div>
           <div class="col-cells" id="cells-N"></div>
         </div>
         <div class="board-col" id="col-G">
-          <div class="col-header" style="background:#2980b9">G</div>
+          <div class="col-header" style="background:#00d4ff">G</div>
           <div class="col-cells" id="cells-G"></div>
         </div>
         <div class="board-col" id="col-O">
-          <div class="col-header" style="background:#8e44ad">O</div>
+          <div class="col-header" style="background:#b44dff">O</div>
           <div class="col-cells" id="cells-O"></div>
         </div>
       </div>
@@ -70,7 +76,7 @@
     z-index:50; cursor:pointer;
   " onclick="this.style.display='none'">
     <div style="font-size:clamp(3rem,10vw,8rem)">🎉</div>
-    <div style="font-size:clamp(2rem,7vw,6rem);font-weight:900;color:#f9ca24;letter-spacing:.1em">BINGO!</div>
+    <div style="font-size:clamp(2rem,7vw,6rem);font-weight:900;color:#ffe100;letter-spacing:.1em">BINGO!</div>
     <div id="winner-display-name" style="font-size:clamp(1.2rem,4vw,3rem);color:#fff"></div>
     <div style="font-size:clamp(.7rem,1.5vw,1.1rem);color:#888;margin-top:1vh">Tap anywhere to dismiss</div>
   </div>

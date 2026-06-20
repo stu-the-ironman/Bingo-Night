@@ -6,7 +6,7 @@ from flask import Flask, render_template, request, jsonify, Response
 from flask_socketio import SocketIO, emit
 from bingo.game import BingoGame
 from bingo.card_generator import generate_cards
-from bingo.session import PlayerRegistry, verify_win
+from bingo.session import PlayerRegistry, verify_win, PATTERNS, PATTERN_NAMES
 from bingo.audit import GameAudit
 
 log = logging.getLogger(__name__)
@@ -22,7 +22,8 @@ game          = BingoGame()
 registry      = PlayerRegistry()
 audit         = GameAudit()
 physical_cards = {}   # card_id → {'name': str}
-game_won      = False  # cleared on reset; prevents duplicate bingo_winner broadcasts
+game_won        = False  # cleared on reset; prevents duplicate bingo_winner broadcasts
+current_pattern = 'line'
 
 # TTS state — populated by _init_tts() at startup
 _tts          = None
@@ -45,6 +46,10 @@ def _init_tts() -> None:
         log.info("TTS ready — %d audio file(s) generated.", count)
     except Exception as exc:
         log.warning("TTS init failed: %s — TTS disabled.", exc)
+
+
+def _game_state() -> dict:
+    return {**game.state(), 'pattern': current_pattern}
 
 
 def _decode_grid(c: str) -> list:
@@ -105,10 +110,11 @@ def api_cards():
 def api_game_state():
     state = game.state()
     return jsonify({
-        'current':  state.get('current'),
-        'called':   state.get('called', []),
+        'current':   state.get('current'),
+        'called':    state.get('called', []),
         'remaining': state.get('remaining', 75),
-        'game_won': game_won,
+        'game_won':  game_won,
+        'pattern':   current_pattern,
     })
 
 
@@ -162,7 +168,7 @@ def api_claim_physical():
     except Exception:
         return jsonify({'error': 'Invalid card data'}), 400
 
-    valid, _line = verify_win(grid, set(game.called))
+    valid, _line = verify_win(grid, set(game.called), current_pattern)
     if not valid:
         return jsonify({'valid': False, 'error': 'Not a winning card yet'}), 200
 
@@ -214,7 +220,7 @@ def api_session_csv(session_id: str):
 
 @socketio.on('connect')
 def on_connect():
-    emit('state', game.state())
+    emit('state', _game_state())
     emit('player_list', registry.player_list())
     emit('tts_state', {'enabled': tts_enabled, 'available': tts_available})
 
@@ -232,7 +238,7 @@ def on_call_next():
         emit('all_called', {})
         return
     audit.record_call(ball)
-    socketio.emit('state', game.state())
+    socketio.emit('state', _game_state())
 
 
 @socketio.on('undo')
@@ -241,7 +247,7 @@ def on_undo():
     game.undo()
     if last_ball:
         audit.record_undo(last_ball)
-    socketio.emit('state', game.state())
+    socketio.emit('state', _game_state())
 
 
 @socketio.on('reset')
@@ -254,8 +260,17 @@ def on_reset():
     # Push new cards to every connected player before broadcasting state
     for sid, card in registry.reset_cards():
         socketio.emit('new_card', {'card': card}, to=sid)
-    socketio.emit('state', game.state())
+    socketio.emit('state', _game_state())
     socketio.emit('player_list', registry.player_list())
+
+
+@socketio.on('set_pattern')
+def on_set_pattern(data):
+    global current_pattern
+    pattern = data.get('pattern', 'line')
+    if pattern in PATTERNS:
+        current_pattern = pattern
+        socketio.emit('state', _game_state())
 
 
 @socketio.on('tts_toggle')
@@ -280,7 +295,7 @@ def on_join(data):
         'player_id': player_id,
         'name': name,
         'card': card,
-        'game_state': game.state(),
+        'game_state': _game_state(),
     })
     socketio.emit('player_list', registry.player_list())
 
@@ -293,7 +308,7 @@ def on_rejoin(data):
         emit('rejoined', {
             'card': player['card'],
             'name': player['name'],
-            'game_state': game.state(),
+            'game_state': _game_state(),
         })
         socketio.emit('player_list', registry.player_list())
     else:
@@ -306,7 +321,7 @@ def on_claim_bingo(data):
     if game_won:
         return
     player_id = str(data.get('player_id', ''))
-    valid, line = registry.claim(player_id, list(game.called))
+    valid, line = registry.claim(player_id, list(game.called), current_pattern)
     emit('claim_result', {'valid': valid, 'line': line})
     if valid:
         game_won = True

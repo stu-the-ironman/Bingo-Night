@@ -132,6 +132,18 @@ html, body {
   color: #fff;
 }
 
+/* Pattern badge */
+.pattern-badge {
+  text-align: center;
+  font-size: .75rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: .2rem 0;
+  opacity: .85;
+}
+
 /* ── Bingo card ── */
 .bingo-card-wrap {
   flex: 1;
@@ -185,6 +197,11 @@ html, body {
   font-size: clamp(.6rem, 3vw, .8rem);
   letter-spacing: .04em;
   transform: none;
+}
+
+.grid-cell.target {
+  outline: 2px solid rgba(255,225,0,.35);
+  outline-offset: -2px;
 }
 
 .grid-cell.latest-mark {

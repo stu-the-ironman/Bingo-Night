@@ -1,13 +1,26 @@
 const COLORS  = { B: '#ff2d78', I: '#ff9500', N: '#00e676', G: '#00d4ff', O: '#b44dff' };
 const LETTERS = 'BINGO';
 
+const PATTERN_CELLS = {
+  line:     null,
+  corners:  [[0,0],[0,4],[4,0],[4,4]],
+  plus:     [[0,2],[1,2],[2,0],[2,1],[2,2],[2,3],[2,4],[3,2],[4,2]],
+  x:        [[0,0],[0,4],[1,1],[1,3],[2,2],[3,1],[3,3],[4,0],[4,4]],
+  blackout: Array.from({length:25}, (_,i) => [Math.floor(i/5), i%5]),
+};
+
+const PATTERN_NAMES = {
+  line: 'Any Line', corners: 'Four Corners', plus: 'Plus', x: 'X Pattern', blackout: 'Blackout',
+};
+
 const socket = io();
 
-let playerId  = null;
-let playerName = null;
-let cardGrid  = null;   // 5×5 array
-let calledSet = new Set();
+let playerId      = null;
+let playerName    = null;
+let cardGrid      = null;
+let calledSet     = new Set();
 let prevCalledSet = new Set();
+let currentPattern = 'line';
 
 // ── Screen management ───────────────────────────────────────────────────────
 
@@ -49,9 +62,7 @@ socket.on('connect', () => {
   }
 });
 
-socket.on('disconnect', () => {
-  // Stay on card screen; will auto-rejoin when socket reconnects
-});
+socket.on('disconnect', () => {});
 
 socket.on('joined', data => {
   playerId   = data.player_id;
@@ -82,6 +93,11 @@ socket.on('rejoin_failed', () => {
 socket.on('state', state => {
   prevCalledSet = new Set(calledSet);
   calledSet = new Set(state.called);
+  if (state.pattern && state.pattern !== currentPattern) {
+    currentPattern = state.pattern;
+    updatePatternBadge();
+    if (cardGrid) updateTargetCells();
+  }
   updateMiniball(state.current);
   if (cardGrid) updateMarks();
 });
@@ -89,7 +105,6 @@ socket.on('state', state => {
 socket.on('new_card', data => {
   prevCalledSet = new Set();
   setCard(data.card);
-  // calledSet will be cleared by the incoming 'state' broadcast
 });
 
 socket.on('claim_result', data => {
@@ -112,10 +127,10 @@ function setCard(card) {
   cardGrid = card.grid;
   renderCard();
   updateMarks();
+  updateTargetCells();
 }
 
 function renderCard() {
-  // Letter header row
   const lettersEl = document.getElementById('card-letters');
   lettersEl.innerHTML = '';
   for (const letter of LETTERS) {
@@ -126,7 +141,6 @@ function renderCard() {
     lettersEl.appendChild(el);
   }
 
-  // Grid
   const gridEl = document.getElementById('card-grid');
   gridEl.innerHTML = '';
   for (let r = 0; r < 5; r++) {
@@ -152,6 +166,21 @@ function renderCard() {
   }
 }
 
+function updateTargetCells() {
+  document.querySelectorAll('.grid-cell').forEach(el => el.classList.remove('target'));
+  const cells = PATTERN_CELLS[currentPattern];
+  if (!cells) return;
+  for (const [r, c] of cells) {
+    const cell = document.querySelector(`.grid-cell[data-r="${r}"][data-c="${c}"]`);
+    if (cell) cell.classList.add('target');
+  }
+}
+
+function updatePatternBadge() {
+  const el = document.getElementById('pattern-badge');
+  if (el) el.textContent = `Pattern: ${PATTERN_NAMES[currentPattern] || currentPattern}`;
+}
+
 function updateMarks() {
   if (!cardGrid) return;
   for (let r = 0; r < 5; r++) {
@@ -162,14 +191,15 @@ function updateMarks() {
       const cell = document.querySelector(`.grid-cell[data-r="${r}"][data-c="${c}"]`);
       if (!cell) continue;
 
-      const isMarked   = calledSet.has(ball);
-      const wasMarked  = prevCalledSet.has(ball);
-      const isNew      = isMarked && !wasMarked;
+      const isMarked  = calledSet.has(ball);
+      const wasMarked = prevCalledSet.has(ball);
+      const isNew     = isMarked && !wasMarked;
 
       cell.classList.toggle('marked', isMarked);
       if (isMarked) {
         cell.style.background = `${COLORS[LETTERS[c]]}cc`;
         cell.style.color = '#fff';
+        cell.classList.remove('target');
       } else {
         cell.style.background = '';
         cell.style.color = `${COLORS[LETTERS[c]]}99`;
@@ -211,6 +241,10 @@ function updateMiniball(current) {
 function applyGameState(state) {
   calledSet = new Set(state.called);
   prevCalledSet = new Set(state.called);
+  if (state.pattern) {
+    currentPattern = state.pattern;
+    updatePatternBadge();
+  }
   updateMiniball(state.current);
 }
 

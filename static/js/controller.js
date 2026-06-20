@@ -1,5 +1,17 @@
 const COLORS = { B: '#ff2d78', I: '#ff9500', N: '#00e676', G: '#00d4ff', O: '#b44dff' };
 
+const PATTERN_CELLS = {
+  line:     null,
+  corners:  [[0,0],[0,4],[4,0],[4,4]],
+  plus:     [[0,2],[1,2],[2,0],[2,1],[2,2],[2,3],[2,4],[3,2],[4,2]],
+  x:        [[0,0],[0,4],[1,1],[1,3],[2,2],[3,1],[3,3],[4,0],[4,4]],
+  blackout: Array.from({length:25}, (_,i) => [Math.floor(i/5), i%5]),
+};
+
+const PATTERN_NAMES = {
+  line: 'Any Line', corners: 'Four Corners', plus: 'Plus', x: 'X Pattern', blackout: 'Blackout',
+};
+
 const btnCall  = document.getElementById('btn-call');
 const btnUndo  = document.getElementById('btn-undo');
 const btnReset = document.getElementById('btn-reset');
@@ -36,6 +48,20 @@ document.getElementById('btn-dismiss-winner').addEventListener('click', () => {
   document.getElementById('winner-banner').classList.add('hidden');
 });
 
+// ── Pattern selector ─────────────────────────────────────────────────────────
+
+document.querySelectorAll('.btn-pattern').forEach(btn => {
+  btn.addEventListener('click', () => {
+    socket.emit('set_pattern', { pattern: btn.dataset.pattern });
+  });
+});
+
+function updateActivePattern(pattern) {
+  document.querySelectorAll('.btn-pattern').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.pattern === pattern);
+  });
+}
+
 // ── TTS toggle ───────────────────────────────────────────────────────────────
 
 function applyTtsState(data) {
@@ -51,7 +77,7 @@ function applyTtsState(data) {
 // ── Game state ──────────────────────────────────────────────────────────────
 
 function applyState(state) {
-  const { current, called, remaining, total } = state;
+  const { current, called, remaining, total, pattern } = state;
 
   const ballEl   = document.getElementById('current-ball');
   const letterEl = document.getElementById('ball-letter');
@@ -69,7 +95,7 @@ function applyState(state) {
   } else {
     letterEl.textContent = '?';
     numberEl.textContent = '';
-    ballEl.style.background = '#2a2a2a';
+    ballEl.style.background = '#1c1c30';
     ballEl.classList.add('idle');
     nameEl.textContent = ' ';
   }
@@ -96,6 +122,8 @@ function applyState(state) {
       el.appendChild(div);
     }
   }
+
+  if (pattern) updateActivePattern(pattern);
 }
 
 // ── Player roster ───────────────────────────────────────────────────────────

@@ -1,6 +1,13 @@
 const COLORS  = { B: '#ff2d78', I: '#ff9500', N: '#00e676', G: '#00d4ff', O: '#b44dff' };
 const LETTERS = ['B', 'I', 'N', 'G', 'O'];
 
+const PATTERN_CELLS = {
+  corners:  [[0,0],[0,4],[4,0],[4,4]],
+  plus:     [[0,2],[1,2],[2,0],[2,1],[2,2],[2,3],[2,4],[3,2],[4,2]],
+  x:        [[0,0],[0,4],[1,1],[1,3],[2,2],[3,1],[3,3],[4,0],[4,4]],
+  blackout: Array.from({length:25}, (_,i) => [Math.floor(i/5), i%5]),
+};
+
 const params      = new URLSearchParams(location.search);
 const cardId      = params.get('id') || '';
 const encodedGrid = params.get('c')  || '';
@@ -16,24 +23,30 @@ function decodeGrid(c) {
   return grid;
 }
 
-function checkWin(grid, calledSet) {
-  const lines = [];
-  for (let r = 0; r < 5; r++) lines.push([[r,0],[r,1],[r,2],[r,3],[r,4]]);
-  for (let c = 0; c < 5; c++) lines.push([[0,c],[1,c],[2,c],[3,c],[4,c]]);
-  lines.push([[0,0],[1,1],[2,2],[3,3],[4,4]]);
-  lines.push([[0,4],[1,3],[2,2],[3,1],[4,0]]);
-  for (const line of lines) {
-    if (line.every(([r, c]) => {
-      const val = grid[r][c];
-      if (val === null) return true;  // FREE counts as marked
-      return calledSet.has(`${LETTERS[c]}${val}`);
-    })) return line;
+function checkWin(grid, calledSet, pattern = 'line') {
+  function isMarked(r, c) {
+    const val = grid[r][c];
+    return val === null || calledSet.has(`${LETTERS[c]}${val}`);
   }
-  return null;
+
+  if (pattern === 'line' || !PATTERN_CELLS[pattern]) {
+    const lines = [];
+    for (let r = 0; r < 5; r++) lines.push([[r,0],[r,1],[r,2],[r,3],[r,4]]);
+    for (let c = 0; c < 5; c++) lines.push([[0,c],[1,c],[2,c],[3,c],[4,c]]);
+    lines.push([[0,0],[1,1],[2,2],[3,3],[4,4]]);
+    lines.push([[0,4],[1,3],[2,2],[3,1],[4,0]]);
+    for (const line of lines) {
+      if (line.every(([r, c]) => isMarked(r, c))) return line;
+    }
+    return null;
+  }
+
+  const cells = PATTERN_CELLS[pattern];
+  return cells.every(([r, c]) => isMarked(r, c)) ? cells : null;
 }
 
 function renderCard(grid, calledSet, winLine) {
-  const winSet   = winLine ? new Set(winLine.map(([r,c]) => `${r},${c}`)) : null;
+  const winSet    = winLine ? new Set(winLine.map(([r,c]) => `${r},${c}`)) : null;
   const lettersEl = document.getElementById('card-letters');
   const gridEl    = document.getElementById('card-grid');
   lettersEl.innerHTML = '';
@@ -51,16 +64,16 @@ function renderCard(grid, calledSet, winLine) {
     const rowEl = document.createElement('div');
     rowEl.className = 'grid-row';
     for (let c = 0; c < 5; c++) {
-      const val    = grid[r][c];
-      const isFree = val === null;
+      const val      = grid[r][c];
+      const isFree   = val === null;
       const isMarked = isFree || calledSet.has(`${LETTERS[c]}${val}`);
       const isWin    = winSet && winSet.has(`${r},${c}`);
 
       const cell = document.createElement('div');
       cell.className = 'grid-cell' +
-        (isFree    ? ' free'     : '') +
-        (isMarked && !isFree ? ' marked' : '') +
-        (isWin     ? ' win-cell' : '');
+        (isFree               ? ' free'     : '') +
+        (isMarked && !isFree  ? ' marked'   : '') +
+        (isWin                ? ' win-cell' : '');
 
       if (!isFree && isMarked) {
         cell.style.color      = COLORS[LETTERS[c]];
@@ -102,7 +115,8 @@ async function init() {
   const state     = await stateRes.json();
   const reg       = (regRes && regRes.ok) ? await regRes.json() : null;
   const calledSet = new Set(state.called || []);
-  const winLine   = checkWin(grid, calledSet);
+  const pattern   = state.pattern || 'line';
+  const winLine   = checkWin(grid, calledSet, pattern);
 
   renderCard(grid, calledSet, winLine);
 

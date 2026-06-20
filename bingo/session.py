@@ -4,35 +4,56 @@ from bingo.card_generator import generate_card
 
 _LETTERS = 'BINGO'
 
+PATTERNS = {
+    'line':     None,   # special: any of 12 standard lines
+    'corners':  [(0,0),(0,4),(4,0),(4,4)],
+    'plus':     [(r,c) for r in range(5) for c in range(5) if r==2 or c==2],
+    'x':        sorted({(i,i) for i in range(5)} | {(i,4-i) for i in range(5)}),
+    'blackout': [(r,c) for r in range(5) for c in range(5)],
+}
+
+PATTERN_NAMES = {
+    'line':     'Any Line',
+    'corners':  'Four Corners',
+    'plus':     'Plus',
+    'x':        'X Pattern',
+    'blackout': 'Blackout',
+}
+
 
 def _cell_to_ball(col: int, val: int) -> str:
     return f"{_LETTERS[col]}{val}"
 
 
-def verify_win(grid: list, called_set: set) -> tuple:
-    """Check all 12 lines (5 rows, 5 cols, 2 diagonals). Return (valid, winning_line)."""
-    lines = []
-    for r in range(5):
-        lines.append([(r, c) for c in range(5)])       # rows
-    for c in range(5):
-        lines.append([(r, c) for r in range(5)])       # cols
-    lines.append([(i, i) for i in range(5)])            # TL→BR diagonal
-    lines.append([(i, 4 - i) for i in range(5)])        # TR→BL diagonal
+def verify_win(grid: list, called_set: set, pattern: str = 'line') -> tuple:
+    """Check win for the given pattern. Return (valid, winning_cells)."""
+    def is_marked(r, c):
+        return grid[r][c] is None or _cell_to_ball(c, grid[r][c]) in called_set
 
-    for line in lines:
-        if all(
-            grid[r][c] is None or _cell_to_ball(c, grid[r][c]) in called_set
-            for r, c in line
-        ):
-            return True, line
+    if pattern == 'line' or pattern not in PATTERNS:
+        lines = []
+        for r in range(5):
+            lines.append([(r, c) for c in range(5)])
+        for c in range(5):
+            lines.append([(r, c) for r in range(5)])
+        lines.append([(i, i) for i in range(5)])
+        lines.append([(i, 4 - i) for i in range(5)])
+        for line in lines:
+            if all(is_marked(r, c) for r, c in line):
+                return True, line
+        return False, None
+
+    cells = PATTERNS[pattern]
+    if all(is_marked(r, c) for r, c in cells):
+        return True, cells
     return False, None
 
 
 class PlayerRegistry:
     def __init__(self):
         self._lock = threading.Lock()
-        self._players = {}      # uuid → {name, card, socket_id, claimed}
-        self._socket_map = {}   # socket_id → uuid
+        self._players = {}
+        self._socket_map = {}
 
     def join(self, name: str, socket_id: str) -> tuple:
         player_id = str(uuid_lib.uuid4())
@@ -65,12 +86,12 @@ class PlayerRegistry:
             if player_id and player_id in self._players:
                 self._players[player_id]['socket_id'] = None
 
-    def claim(self, player_id: str, called: list) -> tuple:
+    def claim(self, player_id: str, called: list, pattern: str = 'line') -> tuple:
         with self._lock:
             player = self._players.get(player_id)
             if not player:
                 return False, None
-            valid, line = verify_win(player['card']['grid'], set(called))
+            valid, line = verify_win(player['card']['grid'], set(called), pattern)
             if valid:
                 player['claimed'] = True
             return valid, line
@@ -80,7 +101,6 @@ class PlayerRegistry:
             return self._players.get(player_id)
 
     def reset_cards(self) -> list:
-        """Assign new cards to all players, clear claimed. Returns [(socket_id, card)]."""
         with self._lock:
             updates = []
             for player in self._players.values():

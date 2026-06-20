@@ -1,7 +1,19 @@
 const COLORS = { B: '#ff2d78', I: '#ff9500', N: '#00e676', G: '#00d4ff', O: '#b44dff' };
 const RANGES = { B: [1,15], I: [16,30], N: [31,45], G: [46,60], O: [61,75] };
 
-// Build number cells — each cell stores its column colour for instant resets
+const PATTERN_CELLS = {
+  line:     null,
+  corners:  [[0,0],[0,4],[4,0],[4,4]],
+  plus:     [[0,2],[1,2],[2,0],[2,1],[2,2],[2,3],[2,4],[3,2],[4,2]],
+  x:        [[0,0],[0,4],[1,1],[1,3],[2,2],[3,1],[3,3],[4,0],[4,4]],
+  blackout: Array.from({length:25}, (_,i) => [Math.floor(i/5), i%5]),
+};
+
+const PATTERN_NAMES = {
+  line: 'Any Line', corners: 'Four Corners', plus: 'Plus', x: 'X Pattern', blackout: 'Blackout',
+};
+
+// Build number cells
 const cellMap = {};
 
 for (const [letter, [lo, hi]] of Object.entries(RANGES)) {
@@ -14,7 +26,7 @@ for (const [letter, [lo, hi]] of Object.entries(RANGES)) {
     el.textContent = n;
     el.dataset.key = key;
     el.dataset.colour = colour;
-    el.style.color = `${colour}80`;   // column colour at ~50% — visible but not called
+    el.style.color = `${colour}80`;
     container.appendChild(el);
     cellMap[key] = el;
   }
@@ -30,24 +42,49 @@ function playClip(path) {
   ttsAudio.play().catch(() => {});
 }
 
+// ── Pattern indicator ─────────────────────────────────────────────────────────
+
+function renderMiniPattern(pattern) {
+  const cells = PATTERN_CELLS[pattern];
+  let html = '';
+  for (let r = 0; r < 5; r++) {
+    html += '<div class="mp-row">';
+    for (let c = 0; c < 5; c++) {
+      const isFree   = r === 2 && c === 2;
+      const isTarget = !cells || cells.some(([pr, pc]) => pr === r && pc === c);
+      const cls = isFree ? 'mp-cell mp-free' : isTarget ? 'mp-cell mp-on' : 'mp-cell';
+      html += `<div class="${cls}"></div>`;
+    }
+    html += '</div>';
+  }
+  return html;
+}
+
+function updatePatternIndicator(pattern) {
+  const nameEl = document.getElementById('pattern-name');
+  const gridEl = document.getElementById('pattern-mini-grid');
+  if (nameEl) nameEl.textContent = PATTERN_NAMES[pattern] || pattern;
+  if (gridEl) gridEl.innerHTML = renderMiniPattern(pattern);
+}
+
+// ── Game state ────────────────────────────────────────────────────────────────
+
 let _lastBall = null;
 
 function applyState(state) {
-  const { current, called } = state;
+  const { current, called, pattern } = state;
 
   if (current && current !== _lastBall) {
     playClip(`/static/audio/balls/${current}.wav`);
   }
   _lastBall = current;
 
-  // Reset all cells to uncalled (column colour at ~50%)
   for (const el of Object.values(cellMap)) {
     el.className = 'board-cell';
     el.style.background = '';
     el.style.color = `${el.dataset.colour}80`;
   }
 
-  // Mark called cells (column colour tint background, full white text)
   for (const ball of called) {
     const el = cellMap[ball];
     if (!el) continue;
@@ -56,7 +93,6 @@ function applyState(state) {
     el.style.color = '#fff';
   }
 
-  // Latest ball — full column colour, pulse
   if (current && cellMap[current]) {
     const el = cellMap[current];
     el.classList.add('latest');
@@ -64,7 +100,6 @@ function applyState(state) {
     el.style.color = '#fff';
   }
 
-  // Current-ball widget
   const ballEl   = document.getElementById('current-ball');
   const letterEl = document.getElementById('ball-letter');
   const numberEl = document.getElementById('ball-number');
@@ -82,7 +117,7 @@ function applyState(state) {
   } else {
     letterEl.textContent = '?';
     numberEl.textContent = '';
-    ballEl.style.background = '#2a2a2a';
+    ballEl.style.background = '#1c1c30';
     ballEl.style.boxShadow = 'none';
     ballEl.classList.add('idle');
     waitMsg.style.opacity = '1';
@@ -90,9 +125,10 @@ function applyState(state) {
 
   document.getElementById('called-count').textContent = called.length;
   updateHistory(called, current);
+
+  if (pattern) updatePatternIndicator(pattern);
 }
 
-// Last 5 calls before the current ball
 function updateHistory(called, current) {
   const historyEl = document.getElementById('call-history');
   const prev = (current && called.length > 1)
@@ -111,7 +147,7 @@ function updateHistory(called, current) {
   }
 }
 
-// QR code — /play URL, rendered once on load
+// QR — scan to join
 new QRCode(document.getElementById('qr-join-code'), {
   text: `${location.origin}/play`,
   width: 180,
@@ -119,6 +155,9 @@ new QRCode(document.getElementById('qr-join-code'), {
   colorDark: '#000000',
   colorLight: '#ffffff',
 });
+
+// Initialise pattern indicator on load
+updatePatternIndicator('line');
 
 const socket = io();
 socket.on('state', applyState);
